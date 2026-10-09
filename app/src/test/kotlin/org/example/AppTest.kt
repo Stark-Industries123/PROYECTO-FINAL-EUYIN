@@ -3,12 +3,49 @@
  */
 package org.example
 
+import fisicas.gravedad.Jupiter
+import fisicas.gravedad.Luna
+import fisicas.gravedad.Mercurio
+import fisicas.gravedad.Tierra
+import fisicas.motor.Simulador
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class AppTest {
-    @Test fun appHasAGreeting() {
-        val classUnderTest = App()
-        assertNotNull(classUnderTest.greeting, "app should have a greeting")
+
+    @Test
+    fun testCalculoTrayectoriaTierra() {
+        val tierra = Tierra()
+        val simulador = Simulador(tierra)
+        val velocidad = 20.0
+        val angulo = 45.0
+
+        val resultado = simulador.calcularTrayectoria(velocidad, angulo)
+
+        assertTrue(resultado.tiempoVuelo > 0, "El tiempo de vuelo debe ser mayor que 0")
+        assertTrue(resultado.distanciaMaxima > 0, "La distancia máxima debe ser mayor que 0")
+        assertTrue(resultado.alturaMaxima > 0, "La altura máxima debe ser mayor que 0")
+    }
+
+    @Test
+    fun testCalculoTrayectoriaAnguloCero() {
+        val tierra = Tierra()
+        val simulador = Simulador(tierra)
+        val resultado = simulador.calcularTrayectoria(velocidadInicial = 15.0, anguloGrados = 0.0)
+
+        assertEquals(0.0, resultado.tiempoVuelo, 0.001, "A 0 grados, el tiempo de vuelo debe ser 0")
+        assertEquals(0.0, resultado.distanciaMaxima, 0.001, "A 0 grados, el alcance debe ser 0")
+        assertEquals(0.0, resultado.alturaMaxima, 0.001, "A 0 grados, la altura máxima debe ser 0")
+    }
+
+    @Test
+    fun testFuentesGravedadValoresValidos() {
+        val planetas = listOf(Tierra(), Luna(), Mercurio(), Jupiter())
+
+        for (planeta in planetas) {
+            assertTrue(planeta.gravedad > 0, "${planeta.obtenerNombre()} debe tener una gravedad positiva")
+            assertTrue(planeta.obtenerNombre().isNotBlank(), "El nombre del cuerpo celeste no debe estar vacío")
+        }
     }
 }
