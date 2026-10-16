@@ -1,6 +1,7 @@
 package org.example
 
 import fisicas.motor.Simulador
+import ui.GraficadorConsola
 import ui.MenuConsola
 
 fun main() {
@@ -16,4 +17,8 @@ fun main() {
     println("Tiempo de vuelo: %.2f segundos".format(resultados.tiempoVuelo))
     println("Alcance máximo: %.2f metros".format(resultados.distanciaMaxima))
     println("Altura máxima: %.2f metros".format(resultados.alturaMaxima))
+
+    val graficador = GraficadorConsola()
+    graficador.graficar(resultados.trayectoria)
 }
+
