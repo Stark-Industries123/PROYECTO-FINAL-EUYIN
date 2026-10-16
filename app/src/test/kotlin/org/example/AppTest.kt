@@ -7,6 +7,7 @@ import fisicas.gravedad.Jupiter
 import fisicas.gravedad.Luna
 import fisicas.gravedad.Mercurio
 import fisicas.gravedad.Tierra
+import fisicas.motor.PuntoTrayectoria
 import fisicas.motor.Simulador
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,6 +27,20 @@ class AppTest {
         assertTrue(resultado.tiempoVuelo > 0, "El tiempo de vuelo debe ser mayor que 0")
         assertTrue(resultado.distanciaMaxima > 0, "La distancia máxima debe ser mayor que 0")
         assertTrue(resultado.alturaMaxima > 0, "La altura máxima debe ser mayor que 0")
+
+        // Verificaciones sobre la trayectoria calculada
+        assertTrue(resultado.trayectoria.isNotEmpty(), "La lista trayectoria no debe estar vacía")
+        val primerPunto = resultado.trayectoria.first()
+        assertEquals(0.0, primerPunto.tiempo, 0.001, "El tiempo inicial debe ser 0.0")
+        assertEquals(0.0, primerPunto.x, 0.001, "El primer punto X debe ser 0.0")
+        assertEquals(0.0, primerPunto.y, 0.001, "El primer punto Y debe ser 0.0")
+
+        // Verificamos que contenga puntos subsiguientes con paso de 0.1s
+        assertTrue(resultado.trayectoria.size > 1, "Debe haber más de un punto para una trayectoria con vuelo")
+        val segundoPunto = resultado.trayectoria[1]
+        assertEquals(0.1, segundoPunto.tiempo, 0.001, "El segundo punto debe estar en t = 0.1s")
+        assertTrue(segundoPunto.x > 0.0, "El avance en X a t = 0.1s debe ser mayor que 0")
+        assertTrue(segundoPunto.y > 0.0, "La altura Y a t = 0.1s debe ser mayor que 0")
     }
 
     @Test
@@ -37,6 +52,20 @@ class AppTest {
         assertEquals(0.0, resultado.tiempoVuelo, 0.001, "A 0 grados, el tiempo de vuelo debe ser 0")
         assertEquals(0.0, resultado.distanciaMaxima, 0.001, "A 0 grados, el alcance debe ser 0")
         assertEquals(0.0, resultado.alturaMaxima, 0.001, "A 0 grados, la altura máxima debe ser 0")
+
+        // Con tiempo de vuelo 0, la trayectoria debe contener al menos el punto inicial (0,0)
+        assertTrue(resultado.trayectoria.isNotEmpty(), "La lista trayectoria no debe estar vacía")
+        val primerPunto = resultado.trayectoria.first()
+        assertEquals(0.0, primerPunto.x, 0.001, "El primer punto X debe ser 0.0")
+        assertEquals(0.0, primerPunto.y, 0.001, "El primer punto Y debe ser 0.0")
+    }
+
+    @Test
+    fun testEncapsulamientoPuntoTrayectoria() {
+        val punto = PuntoTrayectoria(tiempo = 0.5, x = 7.07, y = 3.53)
+        assertEquals(0.5, punto.tiempo)
+        assertEquals(7.07, punto.x)
+        assertEquals(3.53, punto.y)
     }
 
     @Test
