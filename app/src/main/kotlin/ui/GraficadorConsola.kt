@@ -27,12 +27,17 @@ import kotlin.math.roundToInt
  * @property escritorLinea Función receptora para la emisión de líneas de texto (por defecto [println]).
  */
 class GraficadorConsola(
-    val filas: Int = DEFAULT_FILAS,
-    val columnas: Int = DEFAULT_COLUMNAS,
-    val caracterProyectil: Char = DEFAULT_CARACTER_PROYECTIL,
-    val caracterFondo: Char = DEFAULT_CARACTER_FONDO,
-    private val escritorLinea: (String) -> Unit = { println(it) }
-) {
+    private val filas: Int = DEFAULT_FILAS,
+    private val columnas: Int = DEFAULT_COLUMNAS,
+    private val caracterProyectil: Char = DEFAULT_CARACTER_PROYECTIL,
+    private val caracterFondo: Char = DEFAULT_CARACTER_FONDO,
+    private val escritorLinea: (String) -> Unit = ESCRITOR_LINEA_DEFECTO
+) : Graficador {
+
+    fun obtenerFilas(): Int = filas
+    fun obtenerColumnas(): Int = columnas
+    fun obtenerCaracterProyectil(): Char = caracterProyectil
+    fun obtenerCaracterFondo(): Char = caracterFondo
 
     init {
         require(filas > 0) { "El número de filas debe ser estrictamente mayor a 0 (recibido: $filas)." }
@@ -44,7 +49,7 @@ class GraficadorConsola(
      *
      * @param trayectoria Colección inmutable de [PuntoTrayectoria] calculada por el motor físico.
      */
-    fun graficar(trayectoria: List<PuntoTrayectoria>) {
+    override fun graficar(trayectoria: List<PuntoTrayectoria>) {
         if (trayectoria.isEmpty()) {
             escritorLinea("No hay puntos en la trayectoria para graficar.")
             return
@@ -124,6 +129,7 @@ class GraficadorConsola(
     }
 
     companion object {
+        val ESCRITOR_LINEA_DEFECTO: (String) -> Unit = { println(it) }
         const val DEFAULT_FILAS: Int = 15
         const val DEFAULT_COLUMNAS: Int = 60
         const val DEFAULT_CARACTER_PROYECTIL: Char = '*'
