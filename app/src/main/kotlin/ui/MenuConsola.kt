@@ -1,7 +1,7 @@
 package ui
 
 import config.ConfigSimulacion
-import fisicas.gravedad.*
+import fisicas.gravedad.FuenteGravedad
 
 /**
  * Interfaz de usuario por consola (CLI) encargada de la interacción con el usuario
@@ -9,19 +9,20 @@ import fisicas.gravedad.*
  *
  * Cumplimiento de principios POO y SOLID:
  * - Single Responsibility Principle (SRP): Esta clase tiene una única responsabilidad:
- *   solicitar, validar y recopilar los datos requeridos por la consola para construir y retornar
- *   un objeto inmutable [ConfigSimulacion]. No contiene lógica de cálculo físico ni persistencia.
- * - Robustez y Exception-Safety: Se emplean funciones seguras de conversión como [toDoubleOrNull]
- *   y [toIntOrNull] dentro de bucles interactivos `while`, evitando caídas del programa por
- *   excepciones de formato numérico ([NumberFormatException]) ante entradas no válidas.
- * - Inversión de Dependencias (DIP) / Testabilidad: Permite la inyección opcional de lambdas
- *   de lectura y escritura ([lector], [escritor], [escritorLinea]), facilitando la realización de
+ *   coordinar el flujo de entrada y salida (I/O) en consola. Delega las reglas de validación
+ *   y conversión a [ValidadorEntrada].
+ * - Baja Complejidad Ciclomática: Cada método está desacoplado y cuenta con una complejidad ciclomática
+ *   reducida (<= 2 caminos condicionales por método).
+ * - Inversión de Dependencias (DIP) / Testabilidad: Permite la inyección opcional de dependencias
+ *   ([lector], [escritor], [escritorLinea], [validador]), facilitando la realización de
  *   pruebas unitarias sin depender de la entrada/salida estándar del sistema (`System.`in` / `System.out`).
+ * - Encapsulación: Todo el estado interno y dependencias son estrictamente `private`.
  */
 class MenuConsola(
-    private val lector: () -> String? = { readlnOrNull() },
-    private val escritor: (String) -> Unit = { print(it) },
-    private val escritorLinea: (String) -> Unit = { println(it) }
+    private val lector: () -> String? = LECTOR_DEFECTO,
+    private val escritor: (String) -> Unit = ESCRITOR_DEFECTO,
+    private val escritorLinea: (String) -> Unit = ESCRITOR_LINEA_DEFECTO,
+    private val validador: ValidadorEntrada = VALIDADOR_DEFECTO
 ) {
 
     /**
@@ -44,78 +45,111 @@ class MenuConsola(
     }
 
     /**
-     * Muestra el menú numerado de planetas y solicita una opción válida (1-4).
-     * Mapea la opción numérica a su respectiva instancia de [FuenteGravedad].
+     * Muestra el menú de planetas y solicita una opción válida.
      *
      * @return Instancia concreta de [FuenteGravedad].
      */
     fun solicitarPlaneta(): FuenteGravedad {
         while (true) {
-            escritorLinea("\nSelecciona el entorno gravitacional:")
-            escritorLinea("1. Tierra")
-            escritorLinea("2. Luna")
-            escritorLinea("3. Mercurio")
-            escritorLinea("4. Júpiter")
-            escritor("Opción (1-4): ")
-
-            val entrada = lector()?.trim()
-            val opcion = entrada?.toIntOrNull()
-
-            when (opcion) {
-                1 -> return Tierra()
-                2 -> return Luna()
-                3 -> return Mercurio()
-                4 -> return Jupiter()
-                else -> escritorLinea("Opción inválida. Por favor, selecciona un número del 1 al 4.")
+            mostrarMenuPlanetas()
+            val planeta = validador.parsearPlaneta(lector())
+            if (planeta != null) {
+                return planeta
             }
+            escritorLinea("Opción inválida. Por favor, selecciona un número del 1 al 4.")
         }
     }
 
+    private fun mostrarMenuPlanetas() {
+        escritorLinea("\nSelecciona el entorno gravitacional:")
+        escritorLinea("1. Tierra")
+        escritorLinea("2. Luna")
+        escritorLinea("3. Mercurio")
+        escritorLinea("4. Júpiter")
+        escritor("Opción (1-4): ")
+    }
+
     /**
-     * Solicita y valida la velocidad inicial del proyectil.
-     * Debe ser un número de tipo [Double] estrictamente mayor a 0 (> 0).
+     * Solicita y valida la velocidad inicial del proyectil (> 0 m/s).
      *
      * @return Magnitud de la velocidad inicial en m/s.
      */
     fun solicitarVelocidadInicial(): Double {
         while (true) {
             escritor("Introduce la velocidad inicial (m/s, > 0): ")
-            val entrada = lector()?.trim()
-            val valor = entrada?.toDoubleOrNull()
-
-            if (valor == null) {
-                escritorLinea("Entrada inválida. Debes ingresar un número válido (ej: 20.0).")
-            } else if (valor <= 0.0) {
-                escritorLinea("Error: La velocidad inicial debe ser estrictamente mayor a 0 (> 0).")
-            } else {
-                return valor
+            when (val res = validador.parsearVelocidad(lector())) {
+                is ResultadoValidacion.Exito -> return res.valor
+                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
             }
         }
     }
 
     /**
-     * Solicita y valida el ángulo de disparo.
-     * Debe ser un número de tipo [Double] comprendido entre 0° y 90° inclusive (0 <= ángulo <= 90).
+     * Solicita y valida el ángulo de disparo (0° a 90° inclusive).
      *
      * @return Ángulo de elevación en grados.
      */
     fun solicitarAngulo(): Double {
         while (true) {
             escritor("Introduce el ángulo de disparo (grados, 0-90): ")
-            val entrada = lector()?.trim()
-            val valor = entrada?.toDoubleOrNull()
+            when (val res = validador.parsearAngulo(lector())) {
+                is ResultadoValidacion.Exito -> return res.valor
+                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
+            }
+        }
+    }
 
-            if (valor == null) {
-                escritorLinea("Entrada inválida. Debes ingresar un número válido (ej: 45.0).")
-            } else if (valor < 0.0 || valor > 90.0) {
-                escritorLinea("Error: El ángulo debe estar entre 0 y 90 grados inclusive.")
-            } else {
-                return valor
+    /**
+     * Solicita y valida la masa del proyectil (> 0 kg).
+     *
+     * @return Masa del proyectil en kilogramos.
+     */
+    fun solicitarMasa(): Double {
+        while (true) {
+            escritor("Introduce la masa del proyectil (kg, > 0): ")
+            when (val res = validador.parsearMasa(lector())) {
+                is ResultadoValidacion.Exito -> return res.valor
+                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
+            }
+        }
+    }
+
+    /**
+     * Solicita y valida la velocidad del viento (>= 0 km/h).
+     *
+     * @return Velocidad del viento en km/h.
+     */
+    fun solicitarViento(): Double {
+        while (true) {
+            escritor("Introduce la velocidad del viento (km/h, >= 0): ")
+            when (val res = validador.parsearViento(lector())) {
+                is ResultadoValidacion.Exito -> return res.valor
+                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
+            }
+        }
+    }
+
+    /**
+     * Solicita y valida la dirección azimutal del viento (0° a 360°).
+     *
+     * @return Dirección del viento en grados.
+     */
+    fun solicitarDireccion(): Double {
+        while (true) {
+            escritor("Introduce la dirección del viento (grados, 0-360): ")
+            when (val res = validador.parsearDireccion(lector())) {
+                is ResultadoValidacion.Exito -> return res.valor
+                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
             }
         }
     }
 
     companion object {
+        val LECTOR_DEFECTO: () -> String? = { readlnOrNull() }
+        val ESCRITOR_DEFECTO: (String) -> Unit = { print(it) }
+        val ESCRITOR_LINEA_DEFECTO: (String) -> Unit = { println(it) }
+        val VALIDADOR_DEFECTO: ValidadorEntrada = ValidadorEntrada()
+
         /**
          * Función de conveniencia para solicitar la configuración utilizando la consola por defecto.
          */

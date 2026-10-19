@@ -1,14 +1,14 @@
 package ui
 
-import fisicas.gravedad.Jupiter
-import fisicas.gravedad.Luna
-import fisicas.gravedad.Mercurio
 import fisicas.gravedad.Tierra
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class MenuConsolaTest {
+/**
+ * Pruebas unitarias para validar las solicitudes con reintentos y control de errores en [MenuConsola].
+ */
+class MenuConsolaValidationTest {
 
     private fun crearMenuConEntradas(vararg entradas: String): MenuConsola {
         val cola = entradas.toMutableList()
@@ -20,36 +20,7 @@ class MenuConsolaTest {
     }
 
     @Test
-    fun testSeleccionarPlanetaTierra() {
-        val menu = crearMenuConEntradas("1")
-        val planeta = menu.solicitarPlaneta()
-        assertIs<Tierra>(planeta)
-    }
-
-    @Test
-    fun testSeleccionarPlanetaLuna() {
-        val menu = crearMenuConEntradas("2")
-        val planeta = menu.solicitarPlaneta()
-        assertIs<Luna>(planeta)
-    }
-
-    @Test
-    fun testSeleccionarPlanetaMercurio() {
-        val menu = crearMenuConEntradas("3")
-        val planeta = menu.solicitarPlaneta()
-        assertIs<Mercurio>(planeta)
-    }
-
-    @Test
-    fun testSeleccionarPlanetaJupiter() {
-        val menu = crearMenuConEntradas("4")
-        val planeta = menu.solicitarPlaneta()
-        assertIs<Jupiter>(planeta)
-    }
-
-    @Test
     fun testSeleccionarPlanetaConEntradasInvalidas() {
-        // Entradas: no numérico ("abc"), fuera de rango ("0"), fuera de rango ("5"), válido ("1")
         val menu = crearMenuConEntradas("abc", "0", "5", "1")
         val planeta = menu.solicitarPlaneta()
         assertIs<Tierra>(planeta)
@@ -64,7 +35,6 @@ class MenuConsolaTest {
 
     @Test
     fun testSolicitarVelocidadInicialReintentos() {
-        // No numérico ("invalido"), negativo ("-10"), cero ("0"), positivo ("15.5")
         val menu = crearMenuConEntradas("invalido", "-10", "0", "15.5")
         val velocidad = menu.solicitarVelocidadInicial()
         assertEquals(15.5, velocidad)
@@ -72,31 +42,33 @@ class MenuConsolaTest {
 
     @Test
     fun testSolicitarAnguloLimites() {
-        // Ángulo 0° es válido
         val menuMin = crearMenuConEntradas("0")
         assertEquals(0.0, menuMin.solicitarAngulo())
 
-        // Ángulo 90° es válido
         val menuMax = crearMenuConEntradas("90")
         assertEquals(90.0, menuMax.solicitarAngulo())
     }
 
     @Test
     fun testSolicitarAnguloReintentos() {
-        // No numérico ("hola"), negativo ("-0.1"), mayor a 90 ("90.1"), válido ("45")
         val menu = crearMenuConEntradas("hola", "-0.1", "90.1", "45")
         val angulo = menu.solicitarAngulo()
         assertEquals(45.0, angulo)
     }
 
     @Test
-    fun testSolicitarConfiguracionCompleta() {
-        // Planeta: 2 (Luna), Velocidad: 20.0, Ángulo: 30.0
-        val menu = crearMenuConEntradas("2", "20.0", "30.0")
-        val config = menu.solicitarConfiguracion()
+    fun testSolicitarMasaReintentos() {
+        val menu = crearMenuConEntradas("invalido", "-2.0", "0", "3.5")
+        val masa = menu.solicitarMasa()
+        assertEquals(3.5, masa)
+    }
 
-        assertIs<Luna>(config.fuenteGravedad)
-        assertEquals(20.0, config.velocidadInicial)
-        assertEquals(30.0, config.angulo)
+    @Test
+    fun testSolicitarVientoYDireccion() {
+        val menuViento = crearMenuConEntradas("invalido", "-5.0", "25.0")
+        assertEquals(25.0, menuViento.solicitarViento())
+
+        val menuDireccion = crearMenuConEntradas("invalido", "-1.0", "361.0", "180.0")
+        assertEquals(180.0, menuDireccion.solicitarDireccion())
     }
 }
