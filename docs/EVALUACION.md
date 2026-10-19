@@ -3,19 +3,19 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación II (RepoSense + análisis de calidad POO/SOLID). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-10-17.
+> Generado: 2026-10-19.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
-| Índice de calidad POO/SOLID | **6/100** |
+| Índice de calidad POO/SOLID | **7/100** |
 | Código (LOC) | 718 |
 | Archivos de código | 16 |
 | Clases (bien usadas) | 14 (1 OK) |
 | Código dentro de clases (%POO) | 52% |
 | Funciones fuera de clases | 9 |
-| Duplicación | 4.5% |
+| Duplicación lógica | 0.0% |
 | Señales S/O/L/I/D | 3/0/0/0/2 |
 | Tope duro aplicado | `SUELTAS>=3` → índice ≤ 40 |
 
@@ -35,7 +35,7 @@ Criterios de `CRITERIOS-CALIDAD.md`. **Aprobar** se juega con el perfil `estanda
 | Criterio | Requisito | Tu resultado | Cumple |
 |---|---|---|---|
 | Código dentro de clases (%POO) | ≥ 85% | 52% | no |
-| Duplicación | ≤ 10% | 0.0% | sí |
+| Duplicación lógica | ≤ 10% | 0.0% | sí |
 | Funciones fuera de clases | ≤ 1 | 9 | no |
 | Señales POO/SOLID críticas | ninguna | Acoplamiento alto (CBO) | no |
 
@@ -44,10 +44,10 @@ Criterios de `CRITERIOS-CALIDAD.md`. **Aprobar** se juega con el perfil `estanda
 | Criterio | Requisito | Tu resultado | Cumple |
 |---|---|---|---|
 | Código dentro de clases (%POO) | ≥ 95% | 52% | no |
-| Duplicación | ≤ 5% | 4.5% | sí |
+| Duplicación lógica | ≤ 5% | 0.0% | sí |
 | Funciones fuera de clases | ≤ 0 | 9 | no |
 | Señales POO/SOLID críticas | ninguna | Clase demasiado grande (SRP), Complejidad alta, Acoplamiento alto (CBO) | no |
-| Índice de calidad POO/SOLID | ≥ 60 | 6/100 | no |
+| Índice de calidad POO/SOLID | ≥ 60 | 7/100 | no |
 
 ## 2. Autoría (RepoSense)
 
@@ -65,17 +65,13 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina la riqueza de clases bien usadas con la penalización por señales POO/SOLID y duplicación, y luego aplica topes duros.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **6/100**
+- **Tu resultado:** índice **7/100**
 
-### 2. Duplicación (DRY) (duplicacion) — con señales
+### 2. Duplicación lógica (DRY) (duplicacion) — sin señales
 
-- **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
-- **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **4.5%** de duplicación
-- **Para investigar la causa:**
-    - ¿El trabajo se repartió por pantallas o archivos y se integró copiando y pegando bloques?
-    - ¿Qué zonas del sistema cambiaron juntas más de una vez (señal de lógica compartida)?
-    - ¿Hubo un lugar común acordado para la lógica repetida antes de empezar, o cada integrante resolvió lo suyo?
+- **Qué mide:** Porcentaje de bloques de LÓGICA repetidos. Quedan fuera imports/includes, anotaciones, declaraciones de campos y comentarios/Javadoc/docstrings: esos bloques son boilerplate, no lógica.
+- **Por qué importa:** Cada copia de lógica se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
+- **Tu resultado:** **0.0%** de duplicación lógica
 
 ### 3. Adopción de POO (% de código en clases) (poo) — sin señales
 
@@ -231,20 +227,20 @@ xychart-beta
     title "Índice POO/SOLID a lo largo de los commits"
     x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108"]
     y-axis "Índice" 0 --> 100
-    line [0, 0, 21, 30, 22, 10, 11, 9, 6]
+    line [0, 0, 38, 30, 22, 11, 13, 11, 7]
 ```
 
 | # | Fecha | Commit | Autor | LOC | Índice | %POO | Duplic. | Sueltas |
 |---|---|---|---|---:|---:|---:|---:|---:|
 | 1 | 2026-08-21 | `5e46215` | euge | 0 | 0 | 0% | 0.0% | 0 |
 | 2 | 2026-08-24 | `8beeedf` | dqmdz-etec | 0 | 0 | 0% | 0.0% | 0 |
-| 3 | 2026-09-28 | `3be7fbe` | euyin | 105 | 21 | 30% | 8.4% | 1 |
+| 3 | 2026-09-28 | `3be7fbe` | euyin | 105 | 38 | 30% | 0.0% | 1 |
 | 4 | 2026-09-28 | `7284531` | euyin | 174 | 30 | 36% | 0.0% | 3 |
 | 5 | 2026-10-09 | `1fcb049` | euyin | 231 | 22 | 38% | 0.0% | 3 |
-| 6 | 2026-10-09 | `1a12f7b` | euyin | 430 | 10 | 39% | 7.6% | 7 |
-| 7 | 2026-10-09 | `88970ff` | euyin | 393 | 11 | 43% | 8.3% | 5 |
-| 8 | 2026-10-16 | `554234e` | euyin | 445 | 9 | 50% | 7.4% | 5 |
-| 9 | 2026-10-16 | `f7ce108` | euyin | 718 | 6 | 52% | 4.5% | 9 |
+| 6 | 2026-10-09 | `1a12f7b` | euyin | 430 | 11 | 39% | 0.0% | 7 |
+| 7 | 2026-10-09 | `88970ff` | euyin | 393 | 13 | 43% | 0.0% | 5 |
+| 8 | 2026-10-16 | `554234e` | euyin | 445 | 11 | 50% | 0.0% | 5 |
+| 9 | 2026-10-16 | `f7ce108` | euyin | 718 | 7 | 52% | 0.0% | 9 |
 
 ---
 _Informe generado por la cátedra. Los criterios y umbrales de medición corresponden al perfil `exigente` de `calidad.py`; el semáforo de aprobación, a `CRITERIOS-CALIDAD.md` (ver `README.md`). Ante dudas, revisá el archivo señalado._
