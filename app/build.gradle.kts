@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 
     // Apply the application plugin to add support for building a CLI application in Java.
-    application
     id("application")
 }
 
@@ -40,8 +39,7 @@ java {
 }
 
 application {
-    // Define the main class for the application.
-    mainClass = "org.example.App"
+    mainClass.set("org.example.App")
 }
 
 tasks.named<Test>("test") {
