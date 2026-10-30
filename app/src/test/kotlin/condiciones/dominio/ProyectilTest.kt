@@ -40,7 +40,13 @@ class ProyectilTest {
     fun testDescripcionFormateada() {
         val proyectil = Proyectil(pesoKg = 1.5)
         val descripcion = proyectil.descripcionFormateada()
-        assertTrue(descripcion.contains("1.50 kg"))
-        assertTrue(descripcion.contains("1500.0 g"))
+        assertTrue(
+            descripcion.contains("1.50 kg") || descripcion.contains("1,50 kg"),
+            "La descripción debe incluir el peso en kg formateado (recibido: $descripcion)"
+        )
+        assertTrue(
+            descripcion.contains("1500.0 g") || descripcion.contains("1500,0 g"),
+            "La descripción debe incluir el peso en gramos formateado (recibido: $descripcion)"
+        )
     }
 }

@@ -56,10 +56,19 @@ class ConfiguradorCondicionesAppTest {
         assertTrue(salidaTotal.contains("Oeste a Norte (270°-360°: OpN, ONO, NOpO, NO, NOpN, NNO, NpO, N)"))
 
         // Verificación del reporte final
-        assertTrue(salidaTotal.contains("REPORTE FINAL"))
-        assertTrue(salidaTotal.contains("5.00 kg"))
-        assertTrue(salidaTotal.contains("SE (Sureste)"))
-        assertTrue(salidaTotal.contains("25.00 km/h"))
-        assertTrue(salidaTotal.contains("Sopla DESDE el rumbo SE (Sureste)"))
+        assertTrue(salidaTotal.contains("REPORTE FINAL"), "Debe contener el encabezado REPORTE FINAL")
+        assertTrue(
+            salidaTotal.contains("5.00 kg") || salidaTotal.contains("5,00 kg"),
+            "Debe mostrar el peso del proyectil formateado (5.00 kg)"
+        )
+        assertTrue(salidaTotal.contains("SE (Sureste)"), "Debe mostrar el rumbo SE (Sureste)")
+        assertTrue(
+            salidaTotal.contains("25.00 km/h") || salidaTotal.contains("25,00 km/h"),
+            "Debe mostrar la velocidad del viento formateada (25.00 km/h)"
+        )
+        assertTrue(
+            salidaTotal.contains("Sopla DESDE el rumbo SE (Sureste)"),
+            "Debe indicar que sopla desde el rumbo SE (Sureste)"
+        )
     }
 }

@@ -70,7 +70,7 @@ data class Viento(
                 rumbo.nombreCompleto,
                 rumbo.anguloNominal,
                 direccionGrados
-            )
+            ).replace(',', '.')
         }
     }
 

@@ -48,7 +48,7 @@ data class Proyectil(
      * Retorna una descripción resumida y formateada del proyectil.
      */
     fun descripcionFormateada(): String {
-        return "Proyectil(peso = %.2f kg / %.1f g)".format(pesoKg, pesoEnGramos())
+        return "Proyectil(peso = %.2f kg / %.1f g)".format(pesoKg, pesoEnGramos()).replace(',', '.')
     }
 
     companion object {
