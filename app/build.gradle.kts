@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 
     // Apply the application plugin to add support for building a CLI application in Java.
-    application
+    id("application")
 }
 
 repositories {
@@ -39,8 +39,7 @@ java {
 }
 
 application {
-    // Define the main class for the application.
-    mainClass = "org.example.App"
+    mainClass.set("org.example.App")
 }
 
 tasks.named<Test>("test") {
@@ -49,5 +48,13 @@ tasks.named<Test>("test") {
 }
 
 tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
+tasks.register<JavaExec>("runCondiciones") {
+    group = "application"
+    description = "Ejecuta el configurador de condiciones iniciales del tiro parabólico"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("condiciones.ConfiguradorCondicionesApp")
     standardInput = System.`in`
 }
