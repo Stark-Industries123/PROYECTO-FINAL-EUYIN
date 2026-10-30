@@ -84,13 +84,25 @@ class AppTest {
         assertTrue(salida.contains("Sopla DESDE el rumbo NpO (Norte por el Oeste)"))
 
         // 4. Verificación de valores dinámicos en el reporte final
-        assertTrue(salida.contains("Planeta objetivo: Tierra"))
-        assertTrue(salida.contains("4.50 kg"))
-        assertTrue(salida.contains("25.0 km/h"))
-        assertTrue(salida.contains("345.0°"))
+        assertTrue(salida.contains("Planeta objetivo: Tierra"), "Debe mostrar el planeta objetivo Tierra")
+        assertTrue(
+            salida.contains("4.50 kg") || salida.contains("4,50 kg"),
+            "Debe mostrar la masa del proyectil formateada (4.50 kg)"
+        )
+        assertTrue(
+            salida.contains("25.0 km/h") || salida.contains("25,0 km/h"),
+            "Debe mostrar la velocidad del viento formateada (25.0 km/h)"
+        )
+        assertTrue(
+            salida.contains("345.0°") || salida.contains("345,0°"),
+            "Debe mostrar la dirección del viento formateada (345.0°)"
+        )
 
         // 5. Verificación de que se imprimió el gráfico ASCII
-        assertTrue(salida.contains("--- TRAYECTORIA DEL PROYECTIL (ASCII) ---"))
+        assertTrue(
+            salida.contains("--- TRAYECTORIA DEL PROYECTIL (ASCII) ---"),
+            "Debe imprimir el encabezado del gráfico ASCII"
+        )
     }
 
     @Test

@@ -75,7 +75,7 @@ data class PuntoRosaVientos(
      * Formatea el intervalo angular en formato legible (ej: "354.38° - 5.63°").
      */
     fun formatearRango(): String {
-        return "%.2f° - %.2f°".format(rangoMinGrados, rangoMaxGrados)
+        return "%.2f° - %.2f°".format(rangoMinGrados, rangoMaxGrados).replace(',', '.')
     }
 
     /**
@@ -87,7 +87,7 @@ data class PuntoRosaVientos(
             nombreCompleto,
             anguloNominal,
             formatearRango()
-        )
+        ).replace(',', '.')
     }
 
     companion object {

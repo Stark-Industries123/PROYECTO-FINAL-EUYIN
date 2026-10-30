@@ -100,7 +100,7 @@ class PresentadorRosaVientosService(
             "${cierreNorte.nombreCompleto} (360°)",
             360.00,
             cierreNorte.formatearRango()
-        ))
+        ).replace(',', '.'))
         escritor.escribirLinea()
     }
 
@@ -110,7 +110,7 @@ class PresentadorRosaVientosService(
             punto.nombreCompleto,
             punto.anguloNominal,
             punto.formatearRango()
-        ))
+        ).replace(',', '.'))
     }
 
     /**
@@ -131,22 +131,22 @@ class PresentadorRosaVientosService(
         escritor.escribirLinea("   • Peso / Masa:             %.2f kg (%.1f gramos)".format(
             proyectil.pesoKg,
             proyectil.pesoEnGramos()
-        ))
+        ).replace(',', '.'))
         escritor.escribirLinea()
         escritor.escribirLinea("2. CONDICIONES DEL VIENTO (ROSA DE LOS VIENTOS DE 32 PUNTOS):")
-        escritor.escribirLinea("   • Dirección ingresada:     %.2f°".format(viento.direccionGrados))
+        escritor.escribirLinea("   • Dirección ingresada:     %.2f°".format(viento.direccionGrados).replace(',', '.'))
         escritor.escribirLinea("   • Rumbo exacto calculado:  %s (%s)".format(rumbo.codigo, rumbo.nombreCompleto))
         escritor.escribirLinea("   • Cuadrante de origen:     %s".format(rumbo.cuadrante.descripcion))
-        escritor.escribirLinea("   • Rumbo nominal del punto: %.2f°".format(rumbo.anguloNominal))
+        escritor.escribirLinea("   • Rumbo nominal del punto: %.2f°".format(rumbo.anguloNominal).replace(',', '.'))
         escritor.escribirLinea("   • Rango de cobertura:      [%s] (amplitud: %.2f°)".format(
             rumbo.formatearRango(),
             PuntoRosaVientos.AMPLITUD_PUNTO_GRADOS
-        ))
-        escritor.escribirLinea("   • Desviación angular:      %+.2f° con respecto al centro nominal".format(desviacion))
+        ).replace(',', '.'))
+        escritor.escribirLinea("   • Desviación angular:      %+.2f° con respecto al centro nominal".format(desviacion).replace(',', '.'))
         escritor.escribirLinea("   • Velocidad del viento:    %.2f km/h (%.2f m/s)".format(
             viento.velocidad,
             viento.velocidadEnMS()
-        ))
+        ).replace(',', '.'))
         escritor.escribirLinea("   • Origen del viento:       Sopla DESDE el rumbo %s (%s)".format(
             rumbo.codigo,
             rumbo.nombreCompleto

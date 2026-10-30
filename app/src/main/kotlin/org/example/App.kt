@@ -142,7 +142,7 @@ class App(
         escritor.escribirLinea("\n--- RESULTADOS DEL IMPACTO ---")
         escritor.escribirLinea("Planeta objetivo: ${config.fuenteGravedad.obtenerNombre()}")
         escritor.escribirLinea("Gravedad aplicada: ${config.fuenteGravedad.gravedad} m/s²")
-        escritor.escribirLinea("Masa del proyectil: %.2f kg".format(config.masaKg))
+        escritor.escribirLinea("Masa del proyectil: %.2f kg".format(config.masaKg).replace(',', '.'))
         if (config.viento != null) {
             val rumbo = config.viento.rumbo
             escritor.escribirLinea("Viento: %.1f km/h (Sector: %s, Rumbo: %s - %s, %.1f°)".format(
@@ -151,7 +151,7 @@ class App(
                 rumbo.codigo,
                 rumbo.nombreCompleto,
                 config.direccionVientoGrados
-            ))
+            ).replace(',', '.'))
             escritor.escribirLinea("Origen del viento: Sopla DESDE el rumbo %s (%s)".format(
                 rumbo.codigo,
                 rumbo.nombreCompleto
@@ -161,12 +161,12 @@ class App(
                 config.velocidadVientoKmH,
                 config.sectorViento.descripcion,
                 config.direccionVientoGrados
-            ))
+            ).replace(',', '.'))
         }
-        escritor.escribirLinea("Tiempo de vuelo total: %.2f segundos".format(resultados.tiempoVuelo))
-        escritor.escribirLinea("Alcance máximo frontal (X): %.2f metros".format(resultados.distanciaMaxima))
-        escritor.escribirLinea("Desviación lateral (Z): %.2f metros".format(resultados.desviacionLateralMaxima))
-        escritor.escribirLinea("Altura máxima (Y): %.2f metros".format(resultados.alturaMaxima))
+        escritor.escribirLinea("Tiempo de vuelo total: %.2f segundos".format(resultados.tiempoVuelo).replace(',', '.'))
+        escritor.escribirLinea("Alcance máximo frontal (X): %.2f metros".format(resultados.distanciaMaxima).replace(',', '.'))
+        escritor.escribirLinea("Desviación lateral (Z): %.2f metros".format(resultados.desviacionLateralMaxima).replace(',', '.'))
+        escritor.escribirLinea("Altura máxima (Y): %.2f metros".format(resultados.alturaMaxima).replace(',', '.'))
         escritor.escribirLinea("Cantidad de rebotes: ${resultados.cantidadRebotes}")
     }
 
