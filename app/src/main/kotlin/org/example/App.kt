@@ -168,6 +168,8 @@ class App(
         escritor.escribirLinea("Desviación lateral (Z): %.2f metros".format(resultados.desviacionLateralMaxima))
         escritor.escribirLinea("Altura máxima (Y): %.2f metros".format(resultados.alturaMaxima))
         escritor.escribirLinea("Cantidad de rebotes: ${resultados.cantidadRebotes}")
+        escritor.escribirLinea("Velocidad escalar de impacto: %.2f m/s".format(resultados.metricasImpacto.velocidadEscalarFinal))
+        escritor.escribirLinea("Ángulo de llegada al suelo: %.2f°".format(resultados.metricasImpacto.anguloLlegada))
     }
 
     companion object {
