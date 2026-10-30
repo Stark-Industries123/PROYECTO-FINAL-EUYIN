@@ -50,3 +50,11 @@ tasks.named<Test>("test") {
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
 }
+
+tasks.register<JavaExec>("runCondiciones") {
+    group = "application"
+    description = "Ejecuta el configurador de condiciones iniciales del tiro parabólico"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("condiciones.ConfiguradorCondicionesApp")
+    standardInput = System.`in`
+}
