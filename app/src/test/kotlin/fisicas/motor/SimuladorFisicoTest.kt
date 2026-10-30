@@ -244,4 +244,41 @@ class SimuladorFisicoTest {
         assertEquals(-2.5, punto.vy)
         assertEquals(-0.8, punto.vz)
     }
+
+    @Test
+    fun testVientoFuerteDelNorteConPocaMasaGeneraAlcanceYDesplazamientoNegativoEnX() {
+        val simulador = Simulador(tierra)
+
+        // Proyectil de poca masa (0.3 kg) enfrentando viento fuerte del Norte (0.0°, de frente) a 90 km/h
+        val configVientoOpuesto = ConfigSimulacion(
+            velocidadInicial = 15.0,
+            angulo = 60.0,
+            fuenteGravedad = tierra,
+            masaKg = 0.3,
+            velocidadVientoKmH = 90.0,
+            direccionVientoGrados = 0.0
+        )
+
+        val resultado = simulador.calcularTrayectoria(configVientoOpuesto)
+
+        // El arrastre cuadrático Fd = 0.5 * rho * v_rel^2 * Cd * A supera la inercia inicial y empuja hacia -X
+        assertTrue(
+            resultado.trayectoria.any { it.x < 0.0 },
+            "La trayectoria debe contener coordenadas X negativas cuando el viento del Norte supera la inercia"
+        )
+        assertTrue(
+            resultado.distanciaMaxima < 0.0,
+            "El alcance final (distanciaMaxima) debe ser negativo sin truncarse a 0.0 (obtenido: ${resultado.distanciaMaxima})"
+        )
+        assertEquals(
+            resultado.trayectoria.last().x,
+            resultado.distanciaMaxima,
+            1e-9,
+            "distanciaMaxima debe corresponder a la posición X final de impacto/detención"
+        )
+        assertTrue(
+            resultado.cantidadRebotes >= 1,
+            "El proyectil debe realizar rebotes hacia atrás antes de detenerse"
+        )
+    }
 }
