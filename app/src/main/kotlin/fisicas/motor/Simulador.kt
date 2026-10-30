@@ -1,6 +1,8 @@
 package fisicas.motor
 
 import config.ConfigSimulacion
+import fisicas.fuerzas.CalculadorArrastreAerodinamico
+import fisicas.fuerzas.CalculadorFuerzaAerodinamica
 import fisicas.gravedad.FuenteGravedad
 import kotlin.math.abs
 import kotlin.math.cos
@@ -9,50 +11,25 @@ import kotlin.math.round
 import kotlin.math.sin
 
 /**
- * Empaqueta de forma inmutable los resultados calculados por el motor físico.
+ * Orquestador del bucle de simulación física del tiro parabólico y ciclo continuo de rebotes.
  *
  * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Actúa como Data Transfer Object (DTO) inmutable
- *   para transportar las métricas globales y la serie temporal tridimensional de la trayectoria.
- * - Open/Closed Principle (OCP): Abierto a extensión mediante propiedades con valores por defecto
- *   sin romper contratos de código preexistente.
+ * - Single Responsibility Principle (SRP): Coordina el bucle temporal de la simulación y el ciclo
+ *   de rebotes contra el suelo, delegando el cálculo de la fuerza de arrastre en [CalculadorFuerzaAerodinamica]
+ *   y la integración numérica de cada paso en [MotorFisica2D]. No contiene lógica de consola.
+ * - Dependency Inversion Principle (DIP): Implementa [CalculadorTrayectoria] y depende de las
+ *   abstracciones [FuenteGravedad], [CalculadorFuerzaAerodinamica] y [MotorFisica2D].
+ * - Open/Closed Principle (OCP): Permite inyectar motores de integración o modelos aerodinámicos
+ *   alternativos sin modificar esta clase.
  *
- * @property tiempoVuelo Tiempo total transcurrido en segundos hasta el reposo del proyectil.
- * @property distanciaMaxima Alcance frontal máximo alcanzado en el eje X en metros.
- * @property alturaMaxima Altura máxima alcanzada en el eje vertical Y en metros.
- * @property trayectoria Lista inmutable de puntos cinemáticos tridimensionales muestreados en el tiempo.
- * @property cantidadRebotes Número de impactos con rebote efectivo contra el suelo (Y = 0).
- * @property desviacionLateralMaxima Magnitud máxima de desviación en el eje lateral Z en metros.
- * @property alturasMaximasPorPique Alturas máximas registradas en cada arco o pique de la trayectoria.
- */
-data class ResultadoSimulacion(
-    val tiempoVuelo: Double,
-    val distanciaMaxima: Double,
-    val alturaMaxima: Double,
-    val trayectoria: List<PuntoTrayectoria> = emptyList(),
-    val cantidadRebotes: Int = 0,
-    val desviacionLateralMaxima: Double = 0.0,
-    val alturasMaximasPorPique: List<Double> = emptyList()
-)
-
-/**
- * Motor físico encargado de simular la dinámica tridimensional del tiro de un proyectil
- * incorporando gravedad, modelo de arrastre aerodinámico y viento 360°, y mecánica de
- * rebote contra el suelo.
- *
- * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Su única responsabilidad es ejecutar la integración
- *   física y computar la cinemática del proyectil. No realiza validaciones de entrada de consola
- *   ni renderizado de caracteres.
- * - Dependency Inversion Principle (DIP): Implementa la abstracción [CalculadorTrayectoria] y depende
- *   de la interfaz [FuenteGravedad], desacoplando los cálculos de cuerpos celestes específicos.
- * - Open/Closed Principle (OCP): Extensible mediante inyección de coeficientes de restitución y
- *   arrastre, y extensible a futuras vistas 2D (frontal, superior) y 3D completas a través de [PuntoTrayectoria].
- *
- * @property gravedadFoco Abstracción que provee la aceleración gravitacional del entorno.
+ * @property gravedadFoco Abstracción que provee la aceleración gravitacional por defecto.
  * @property coeficienteRestitucion Fracción de velocidad vertical preservada tras impactar el suelo (0.0 a 1.0).
- * @property coeficienteArrastre Constante de proporcionalidad para el modelo de resistencia aerodinámica.
- * @property pasoTiempoMuestreo Intervalo temporal en segundos entre puntos sucesivos registrados en la trayectoria.
+ * @property coeficienteArrastre Coeficiente adimensional de resistencia aerodinámica Cd.
+ * @property pasoTiempoMuestreo Intervalo temporal en segundos entre puntos muestreados en la trayectoria.
+ * @property densidadAire Densidad del fluido rho en kg/m³.
+ * @property areaTransversal Área de sección transversal A en m².
+ * @property calculadorAerodinamico Servicio inyectado para evaluar la fuerza y aceleración de arrastre.
+ * @property motorFisica Motor de integración numérica inyectado para evolucionar el estado del proyectil.
  */
 class Simulador(
     private val gravedadFoco: FuenteGravedad,
@@ -60,7 +37,13 @@ class Simulador(
     private val coeficienteArrastre: Double = DEFAULT_COEFICIENTE_ARRASTRE,
     private val pasoTiempoMuestreo: Double = PASO_TIEMPO_MUESTREO,
     private val densidadAire: Double = DEFAULT_DENSIDAD_AIRE,
-    private val areaTransversal: Double = DEFAULT_AREA_TRANSVERSAL
+    private val areaTransversal: Double = DEFAULT_AREA_TRANSVERSAL,
+    private val calculadorAerodinamico: CalculadorFuerzaAerodinamica = CalculadorArrastreAerodinamico(
+        densidadAire = densidadAire,
+        coeficienteArrastre = coeficienteArrastre,
+        areaTransversal = areaTransversal
+    ),
+    private val motorFisica: MotorFisica2D = MotorFisicaEuler2D(calculadorAerodinamico)
 ) : CalculadorTrayectoria {
 
     fun obtenerCoeficienteRestitucion(): Double = coeficienteRestitucion
@@ -68,6 +51,8 @@ class Simulador(
     fun obtenerPasoTiempoMuestreo(): Double = pasoTiempoMuestreo
     fun obtenerDensidadAire(): Double = densidadAire
     fun obtenerAreaTransversal(): Double = areaTransversal
+    fun obtenerCalculadorAerodinamico(): CalculadorFuerzaAerodinamica = calculadorAerodinamico
+    fun obtenerMotorFisica(): MotorFisica2D = motorFisica
 
     init {
         require(coeficienteRestitucion in 0.0..1.0) {
@@ -88,218 +73,27 @@ class Simulador(
     }
 
     /**
-     * Calcula la fuerza de arrastre aerodinámico cuadrático en un eje según la ecuación:
-     * F_d = (1/2) * rho * v_relativa^2 * C_d * A, preservando el sentido del flujo relativo.
-     *
-     * @param velocidadRelativa Velocidad relativa del fluido respecto del proyectil (v_viento - v_proyectil).
-     * @return Fuerza de arrastre resultante en Newtons (N).
+     * Delega el cálculo de la fuerza de arrastre aerodinámico en [calculadorAerodinamico].
      */
     internal fun calcularFuerzaArrastre(velocidadRelativa: Double): Double {
-        return 0.5 * densidadAire * velocidadRelativa * abs(velocidadRelativa) * coeficienteArrastre * areaTransversal
+        return calculadorAerodinamico.calcularFuerzaArrastre(velocidadRelativa, 0.0)
     }
 
     /**
-     * Calcula la trayectoria completa del proyectil a partir del objeto inmutable [ConfigSimulacion].
-     *
-     * Integra numéricamente las ecuaciones diferenciales de movimiento:
-     * - Gravedad constante hacia el suelo en Y: a_g = -g.
-     * - Descomposición vectorial del viento en ejes X (frontal/trasero) y Z (lateral).
-     * - Fuerza de arrastre proporcional a la velocidad relativa respecto del viento: F = -k * v_rel.
-     * - Aceleración eólica e inercial inversamente dependiente de la masa: a_drag = F / m = -(k / m) * v_rel.
-     * - Mecánica de rebotes en el suelo Y = 0 con inversión de velocidad vertical v_y = -v_y * e hasta reposo.
-     *
-     * @param config Configuración inmutable de disparo con parámetros de masa, viento y gravedad.
-     * @return [ResultadoSimulacion] con la métrica física y los puntos 3D de la trayectoria.
+     * Calcula la trayectoria completa del proyectil manteniendo la aceleración del viento (ax)
+     * de forma ininterrumpida durante el vuelo y todos los rebotes sucesivos.
      */
     override fun calcularTrayectoria(config: ConfigSimulacion): ResultadoSimulacion {
-        val g = config.fuenteGravedad.gravedad
-
-        // Casos borde: velocidad inicial 0 o ángulo de 0° (en el suelo sin componente vertical)
         if (config.velocidadInicial <= 0.0 || config.angulo <= 0.0) {
-            val puntoInicial = PuntoTrayectoria(
-                tiempo = 0.0,
-                x = 0.0,
-                y = 0.0,
-                z = 0.0,
-                vx = 0.0,
-                vy = 0.0,
-                vz = 0.0
-            )
-            return ResultadoSimulacion(
-                tiempoVuelo = 0.0,
-                distanciaMaxima = 0.0,
-                alturaMaxima = 0.0,
-                trayectoria = listOf(puntoInicial),
-                cantidadRebotes = 0,
-                desviacionLateralMaxima = 0.0,
-                alturasMaximasPorPique = emptyList()
-            )
+            return crearResultadoEnReposoInicial()
         }
 
-        val anguloRad = Math.toRadians(config.angulo)
-
-        // Descomposición inicial de velocidad (tiro vertical puro a 90° anula v_x para evitar error de coma flotante)
-        var vx = if (abs(config.angulo - 90.0) < EPSILON) 0.0 else config.velocidadInicial * cos(anguloRad)
-        var vy = config.velocidadInicial * sin(anguloRad)
-        var vz = 0.0
-
-        var x = 0.0
-        var y = 0.0
-        var z = 0.0
-        var tiempoActual = 0.0
-
-        val masa = config.masaKg
-        val vVientoMS = config.velocidadVientoMS()
-        val dirVientoRad = Math.toRadians(config.direccionVientoGrados)
-
-        // Descomposición vectorial del viento (0° = Norte / Viento frontal en contra, 90° = Este / Lateral en Z)
-        val vientoX = -vVientoMS * cos(dirVientoRad)
-        val vientoZ = -vVientoMS * sin(dirVientoRad)
-
-        val trayectoria = mutableListOf<PuntoTrayectoria>()
-        trayectoria.add(
-            PuntoTrayectoria(
-                tiempo = 0.0,
-                x = 0.0,
-                y = 0.0,
-                z = 0.0,
-                vx = vx,
-                vy = vy,
-                vz = vz
-            )
-        )
-
-        var cantidadRebotes = 0
-        val alturasMaximasPorPique = mutableListOf<Double>()
-        var alturaMaximaPiqueActual = 0.0
-        var alturaMaximaGlobal = 0.0
-        var enReposo = false
-
-        val subPasos = max(1, (pasoTiempoMuestreo / PASO_SUB_INTEGRACION).toInt())
-        val dt = pasoTiempoMuestreo / subPasos
-
-        while (!enReposo && tiempoActual < MAX_TIEMPO_SIMULACION) {
-            for (paso in 0 until subPasos) {
-                // Velocidad relativa del viento respecto del proyectil (v_rel = v_viento - v_proyectil)
-                val vrelX = vientoX - vx
-                val vrelY = -vy
-                val vrelZ = vientoZ - vz
-
-                // Fuerza de arrastre aerodinámico cuadrático: F_d = (1/2) * rho * v_relativa^2 * C_d * A
-                val fdX = calcularFuerzaArrastre(vrelX)
-                val fdY = calcularFuerzaArrastre(vrelY)
-                val fdZ = calcularFuerzaArrastre(vrelZ)
-
-                // Aceleraciones por Segunda Ley de Newton: a = F_d / m (más gravedad en Y)
-                val ax = fdX / masa
-                val ay = -g + (fdY / masa)
-                val az = fdZ / masa
-
-                // Integración numérica (Euler-Cromer)
-                vx += ax * dt
-                vy += ay * dt
-                vz += az * dt
-
-                x += vx * dt
-                y += vy * dt
-                z += vz * dt
-
-                if (y > alturaMaximaPiqueActual) {
-                    alturaMaximaPiqueActual = y
-                }
-                if (y > alturaMaximaGlobal) {
-                    alturaMaximaGlobal = y
-                }
-
-                // Detección de impacto contra el suelo (Y <= 0)
-                if (y <= 0.0) {
-                    y = 0.0
-                    if (vy < 0.0) {
-                        if (abs(vy) > UMBRAL_VELOCIDAD_REBOTE && coeficienteRestitucion > 0.0) {
-                            // Rebote significativo: invertimos la velocidad vertical amortiguada
-                            if (alturaMaximaPiqueActual > UMBRAL_ALTURA_PIQUE) {
-                                alturasMaximasPorPique.add(alturaMaximaPiqueActual)
-                            }
-                            alturaMaximaPiqueActual = 0.0
-                            vy = -vy * coeficienteRestitucion
-                            cantidadRebotes++
-                            if (paso < subPasos - 1) {
-                                val tiempoRebote = round((tiempoActual + (paso + 1) * dt) * 1000.0) / 1000.0
-                                trayectoria.add(
-                                    PuntoTrayectoria(
-                                        tiempo = tiempoRebote,
-                                        x = x,
-                                        y = 0.0,
-                                        z = z,
-                                        vx = vx,
-                                        vy = vy,
-                                        vz = vz
-                                    )
-                                )
-                            }
-                        } else {
-                            // Energía de rebote despreciable: fin del movimiento (reposo)
-                            if (alturaMaximaPiqueActual > UMBRAL_ALTURA_PIQUE) {
-                                alturasMaximasPorPique.add(alturaMaximaPiqueActual)
-                            }
-                            alturaMaximaPiqueActual = 0.0
-                            vy = 0.0
-                            vx = 0.0
-                            vz = 0.0
-                            enReposo = true
-                            break
-                        }
-                    }
-                }
-            }
-
-            tiempoActual += pasoTiempoMuestreo
-            val tiempoMuestreado = round(tiempoActual * 1000.0) / 1000.0
-
-            trayectoria.add(
-                PuntoTrayectoria(
-                    tiempo = tiempoMuestreado,
-                    x = x,
-                    y = max(0.0, y),
-                    z = z,
-                    vx = vx,
-                    vy = vy,
-                    vz = vz
-                )
-            )
-
-            if (enReposo) {
-                break
-            }
-        }
-
-        // Si no hubo piques previos pero sí vuelo inicial
-        if (alturasMaximasPorPique.isEmpty() && alturaMaximaGlobal > 0.0) {
-            alturasMaximasPorPique.add(alturaMaximaGlobal)
-        }
-
-        val tiempoVuelo = trayectoria.last().tiempo
-        val distanciaMaxima = trayectoria.last().x
-        val desviacionLateralMaxima = trayectoria.maxOf { abs(it.z) }
-
-        return ResultadoSimulacion(
-            tiempoVuelo = tiempoVuelo,
-            distanciaMaxima = distanciaMaxima,
-            alturaMaxima = alturaMaximaGlobal,
-            trayectoria = trayectoria,
-            cantidadRebotes = cantidadRebotes,
-            desviacionLateralMaxima = desviacionLateralMaxima,
-            alturasMaximasPorPique = alturasMaximasPorPique
-        )
+        val estadoInicial = crearPuntoInicial(config)
+        return ejecutarCicloSimulacion(config, estadoInicial)
     }
 
     /**
-     * Sobrecarga de conveniencia que mantiene compatibilidad retrocompatible con versiones previas,
-     * delegando en [calcularTrayectoria] con la configuración por defecto de masa y viento.
-     *
-     * @param velocidadInicial Velocidad inicial de disparo en m/s.
-     * @param anguloGrados Ángulo de elevación en grados.
-     * @return [ResultadoSimulacion] calculado.
+     * Sobrecarga de conveniencia que utiliza la configuración por defecto de masa y viento.
      */
     fun calcularTrayectoria(velocidadInicial: Double, anguloGrados: Double): ResultadoSimulacion {
         val config = ConfigSimulacion(
@@ -309,6 +103,118 @@ class Simulador(
         )
         return calcularTrayectoria(config)
     }
+
+    private fun crearResultadoEnReposoInicial(): ResultadoSimulacion {
+        val puntoInicial = PuntoTrayectoria(tiempo = 0.0, x = 0.0, y = 0.0)
+        return ResultadoSimulacion(
+            tiempoVuelo = 0.0,
+            distanciaMaxima = 0.0,
+            alturaMaxima = 0.0,
+            trayectoria = listOf(puntoInicial),
+            cantidadRebotes = 0,
+            desviacionLateralMaxima = 0.0,
+            alturasMaximasPorPique = emptyList(),
+            metricasImpacto = MetricasImpacto.IMPACTO_NULO
+        )
+    }
+
+    private fun crearPuntoInicial(config: ConfigSimulacion): PuntoTrayectoria {
+        val anguloRad = Math.toRadians(config.angulo)
+        val vx = if (abs(config.angulo - 90.0) < EPSILON) 0.0 else config.velocidadInicial * cos(anguloRad)
+        val vy = config.velocidadInicial * sin(anguloRad)
+        return PuntoTrayectoria(tiempo = 0.0, x = 0.0, y = 0.0, z = 0.0, vx = vx, vy = vy, vz = 0.0)
+    }
+
+    private fun ejecutarCicloSimulacion(
+        config: ConfigSimulacion,
+        estadoInicial: PuntoTrayectoria
+    ): ResultadoSimulacion {
+        val g = config.fuenteGravedad.gravedad
+        val masa = config.masaKg
+        val dirVientoRad = Math.toRadians(config.direccionVientoGrados)
+        val vientoX = -config.velocidadVientoMS() * cos(dirVientoRad)
+        val vientoZ = -config.velocidadVientoMS() * sin(dirVientoRad)
+
+        val trayectoria = mutableListOf(estadoInicial)
+        val alturasMaximasPorPique = mutableListOf<Double>()
+        var estado = estadoInicial
+        var cantidadRebotes = 0
+        var alturaMaximaPiqueActual = 0.0
+        var alturaMaximaGlobal = 0.0
+        var metricasImpacto = MetricasImpacto.IMPACTO_NULO
+        var tiempoActual = 0.0
+        var enReposo = false
+
+        val subPasos = max(1, (pasoTiempoMuestreo / PASO_SUB_INTEGRACION).toInt())
+        val dt = pasoTiempoMuestreo / subPasos
+
+        while (!enReposo && tiempoActual < MAX_TIEMPO_SIMULACION) {
+            for (paso in 0 until subPasos) {
+                estado = motorFisica.avanzarEstado(estado, masa, g, vientoX, dt, vientoZ)
+                alturaMaximaPiqueActual = max(alturaMaximaPiqueActual, estado.y)
+                alturaMaximaGlobal = max(alturaMaximaGlobal, estado.y)
+
+                if (estado.y <= 0.0 && estado.vy < 0.0) {
+                    metricasImpacto = MetricasImpacto(vx = estado.vx, vy = estado.vy)
+                    if (alturaMaximaPiqueActual > UMBRAL_ALTURA_PIQUE) {
+                        alturasMaximasPorPique.add(alturaMaximaPiqueActual)
+                    }
+                    alturaMaximaPiqueActual = 0.0
+
+                    if (tieneEnergiaParaRebotar(estado.vy)) {
+                        estado = estado.copy(y = 0.0, vy = -estado.vy * coeficienteRestitucion)
+                        cantidadRebotes++
+                        registrarPuntoReboteIntermedio(trayectoria, estado, tiempoActual, paso, subPasos, dt)
+                    } else {
+                        estado = estado.copy(y = 0.0, vx = 0.0, vy = 0.0, vz = 0.0)
+                        enReposo = true
+                        break
+                    }
+                } else if (estado.y <= 0.0) {
+                    estado = estado.copy(y = 0.0)
+                }
+            }
+
+            tiempoActual += pasoTiempoMuestreo
+            val tiempoMuestreado = redondearTiempo(tiempoActual)
+            trayectoria.add(estado.copy(tiempo = tiempoMuestreado, y = max(0.0, estado.y)))
+        }
+
+        if (alturasMaximasPorPique.isEmpty() && alturaMaximaGlobal > 0.0) {
+            alturasMaximasPorPique.add(alturaMaximaGlobal)
+        }
+
+        return ResultadoSimulacion(
+            tiempoVuelo = trayectoria.last().tiempo,
+            distanciaMaxima = trayectoria.last().x,
+            alturaMaxima = alturaMaximaGlobal,
+            trayectoria = trayectoria,
+            cantidadRebotes = cantidadRebotes,
+            desviacionLateralMaxima = trayectoria.maxOf { abs(it.z) },
+            alturasMaximasPorPique = alturasMaximasPorPique,
+            metricasImpacto = metricasImpacto
+        )
+    }
+
+    private fun tieneEnergiaParaRebotar(vy: Double): Boolean {
+        return abs(vy) > UMBRAL_VELOCIDAD_REBOTE && coeficienteRestitucion > 0.0
+    }
+
+    private fun registrarPuntoReboteIntermedio(
+        trayectoria: MutableList<PuntoTrayectoria>,
+        estadoRebote: PuntoTrayectoria,
+        tiempoBase: Double,
+        paso: Int,
+        subPasos: Int,
+        dt: Double
+    ) {
+        if (paso < subPasos - 1) {
+            val tiempoRebote = redondearTiempo(tiempoBase + (paso + 1) * dt)
+            trayectoria.add(estadoRebote.copy(tiempo = tiempoRebote, y = 0.0))
+        }
+    }
+
+    private fun redondearTiempo(tiempo: Double): Double = round(tiempo * 1000.0) / 1000.0
 
     companion object {
         const val PASO_TIEMPO_MUESTREO: Double = 0.1
