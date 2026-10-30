@@ -58,12 +58,16 @@ class Simulador(
     private val gravedadFoco: FuenteGravedad,
     private val coeficienteRestitucion: Double = DEFAULT_COEFICIENTE_RESTITUCION,
     private val coeficienteArrastre: Double = DEFAULT_COEFICIENTE_ARRASTRE,
-    private val pasoTiempoMuestreo: Double = PASO_TIEMPO_MUESTREO
+    private val pasoTiempoMuestreo: Double = PASO_TIEMPO_MUESTREO,
+    private val densidadAire: Double = DEFAULT_DENSIDAD_AIRE,
+    private val areaTransversal: Double = DEFAULT_AREA_TRANSVERSAL
 ) : CalculadorTrayectoria {
 
     fun obtenerCoeficienteRestitucion(): Double = coeficienteRestitucion
     fun obtenerCoeficienteArrastre(): Double = coeficienteArrastre
     fun obtenerPasoTiempoMuestreo(): Double = pasoTiempoMuestreo
+    fun obtenerDensidadAire(): Double = densidadAire
+    fun obtenerAreaTransversal(): Double = areaTransversal
 
     init {
         require(coeficienteRestitucion in 0.0..1.0) {
@@ -75,6 +79,23 @@ class Simulador(
         require(pasoTiempoMuestreo > 0.0) {
             "El paso de tiempo de muestreo debe ser estrictamente mayor a 0 (recibido: $pasoTiempoMuestreo)."
         }
+        require(densidadAire >= 0.0) {
+            "La densidad del aire debe ser mayor o igual a 0 (recibido: $densidadAire)."
+        }
+        require(areaTransversal >= 0.0) {
+            "El área transversal debe ser mayor o igual a 0 (recibido: $areaTransversal)."
+        }
+    }
+
+    /**
+     * Calcula la fuerza de arrastre aerodinámico cuadrático en un eje según la ecuación:
+     * F_d = (1/2) * rho * v_relativa^2 * C_d * A, preservando el sentido del flujo relativo.
+     *
+     * @param velocidadRelativa Velocidad relativa del fluido respecto del proyectil (v_viento - v_proyectil).
+     * @return Fuerza de arrastre resultante en Newtons (N).
+     */
+    internal fun calcularFuerzaArrastre(velocidadRelativa: Double): Double {
+        return 0.5 * densidadAire * velocidadRelativa * abs(velocidadRelativa) * coeficienteArrastre * areaTransversal
     }
 
     /**
@@ -159,15 +180,20 @@ class Simulador(
 
         while (!enReposo && tiempoActual < MAX_TIEMPO_SIMULACION) {
             for (paso in 0 until subPasos) {
-                // Velocidad relativa proyectil - viento
-                val vrelX = vx - vientoX
-                val vrelY = vy
-                val vrelZ = vz - vientoZ
+                // Velocidad relativa del viento respecto del proyectil (v_rel = v_viento - v_proyectil)
+                val vrelX = vientoX - vx
+                val vrelY = -vy
+                val vrelZ = vientoZ - vz
 
-                // Aceleraciones aerodinámicas: A = F / m = -(k / m) * v_rel
-                val ax = -(coeficienteArrastre / masa) * vrelX
-                val ay = -g - (coeficienteArrastre / masa) * vrelY
-                val az = -(coeficienteArrastre / masa) * vrelZ
+                // Fuerza de arrastre aerodinámico cuadrático: F_d = (1/2) * rho * v_relativa^2 * C_d * A
+                val fdX = calcularFuerzaArrastre(vrelX)
+                val fdY = calcularFuerzaArrastre(vrelY)
+                val fdZ = calcularFuerzaArrastre(vrelZ)
+
+                // Aceleraciones por Segunda Ley de Newton: a = F_d / m (más gravedad en Y)
+                val ax = fdX / masa
+                val ay = -g + (fdY / masa)
+                val az = fdZ / masa
 
                 // Integración numérica (Euler-Cromer)
                 vx += ax * dt
@@ -197,6 +223,20 @@ class Simulador(
                             alturaMaximaPiqueActual = 0.0
                             vy = -vy * coeficienteRestitucion
                             cantidadRebotes++
+                            if (paso < subPasos - 1) {
+                                val tiempoRebote = round((tiempoActual + (paso + 1) * dt) * 1000.0) / 1000.0
+                                trayectoria.add(
+                                    PuntoTrayectoria(
+                                        tiempo = tiempoRebote,
+                                        x = x,
+                                        y = 0.0,
+                                        z = z,
+                                        vx = vx,
+                                        vy = vy,
+                                        vz = vz
+                                    )
+                                )
+                            }
                         } else {
                             // Energía de rebote despreciable: fin del movimiento (reposo)
                             if (alturaMaximaPiqueActual > UMBRAL_ALTURA_PIQUE) {
@@ -239,7 +279,7 @@ class Simulador(
         }
 
         val tiempoVuelo = trayectoria.last().tiempo
-        val distanciaMaxima = max(0.0, trayectoria.maxOf { it.x })
+        val distanciaMaxima = trayectoria.last().x
         val desviacionLateralMaxima = trayectoria.maxOf { abs(it.z) }
 
         return ResultadoSimulacion(
@@ -274,6 +314,8 @@ class Simulador(
         const val PASO_TIEMPO_MUESTREO: Double = 0.1
         const val DEFAULT_COEFICIENTE_RESTITUCION: Double = 0.75
         const val DEFAULT_COEFICIENTE_ARRASTRE: Double = 0.05
+        const val DEFAULT_DENSIDAD_AIRE: Double = 1.225
+        const val DEFAULT_AREA_TRANSVERSAL: Double = 0.5
         const val UMBRAL_VELOCIDAD_REBOTE: Double = 0.2
         const val UMBRAL_ALTURA_PIQUE: Double = 1e-4
         private const val PASO_SUB_INTEGRACION: Double = 0.001

@@ -31,13 +31,15 @@ class GraficadorConsola(
     private val columnas: Int = DEFAULT_COLUMNAS,
     private val caracterProyectil: Char = DEFAULT_CARACTER_PROYECTIL,
     private val caracterFondo: Char = DEFAULT_CARACTER_FONDO,
-    private val escritorLinea: (String) -> Unit = ESCRITOR_LINEA_DEFECTO
+    private val escritorLinea: (String) -> Unit = ESCRITOR_LINEA_DEFECTO,
+    private val caracterEjeOrigen: Char = DEFAULT_CARACTER_EJE_ORIGEN
 ) : Graficador {
 
     fun obtenerFilas(): Int = filas
     fun obtenerColumnas(): Int = columnas
     fun obtenerCaracterProyectil(): Char = caracterProyectil
     fun obtenerCaracterFondo(): Char = caracterFondo
+    fun obtenerCaracterEjeOrigen(): Char = caracterEjeOrigen
 
     init {
         require(filas > 0) { "El número de filas debe ser estrictamente mayor a 0 (recibido: $filas)." }
@@ -60,11 +62,23 @@ class GraficadorConsola(
         for (fila in lienzo) {
             escritorLinea(fila)
         }
+        if (tieneDesplazamientoNegativo(trayectoria)) {
+            val minX = minOf(0.0, trayectoria.minOf { it.x })
+            val maxX = maxOf(0.0, trayectoria.maxOf { it.x })
+            escritorLinea("Eje X [Sur (-X) <-- $caracterEjeOrigen Origen (0.00 m) --> Norte (+X)]: [%.2f m a %.2f m]".format(minX, maxX))
+        }
     }
 
     /**
      * Renderiza la colección de puntos en una lista de cadenas que representan las filas
      * de la matriz bidimensional, facilitando inspección y pruebas unitarias sin acoplamiento a E/S.
+     *
+     * Vista lateral observada desde el Este (derecha del proyectil lanzado hacia el Norte):
+     * - El avance hacia el Norte (+X) se proyecta hacia la derecha.
+     * - El retroceso hacia el Sur (-X, por viento de frente del Norte) se proyecta hacia la izquierda.
+     * - Cuando existen desplazamientos negativos (X < 0.0), se traza una línea vertical recta ([caracterEjeOrigen])
+     *   en la columna correspondiente al punto de origen (X = 0.0) y se grafican con [caracterProyectil]
+     *   tanto la trayectoria como los rebotes hacia atrás.
      *
      * @param trayectoria Colección inmutable de puntos discretos en el espacio.
      * @return Lista inmutable de cadenas con tamaño igual a [filas] y longitud de cada cadena igual a [columnas].
@@ -76,10 +90,18 @@ class GraficadorConsola(
             return matriz.map { String(it) }
         }
 
-        val minX = trayectoria.minOf { it.x }
-        val maxX = trayectoria.maxOf { it.x }
+        val hayNegativos = tieneDesplazamientoNegativo(trayectoria)
+        val minX = if (hayNegativos) minOf(0.0, trayectoria.minOf { it.x }) else trayectoria.minOf { it.x }
+        val maxX = if (hayNegativos) maxOf(0.0, trayectoria.maxOf { it.x }) else trayectoria.maxOf { it.x }
         val minY = minOf(0.0, trayectoria.minOf { it.y })
         val maxY = trayectoria.maxOf { it.y }
+
+        if (hayNegativos) {
+            val columnaOrigen = mapearCoordenadaX(0.0, minX, maxX)
+            for (fila in 0 until filas) {
+                matriz[fila][columnaOrigen] = caracterEjeOrigen
+            }
+        }
 
         for (punto in trayectoria) {
             val fila = mapearCoordenadaY(punto.y, minY, maxY)
@@ -88,6 +110,13 @@ class GraficadorConsola(
         }
 
         return matriz.map { String(it) }
+    }
+
+    /**
+     * Determina si la trayectoria contiene puntos con desplazamiento negativo en el eje X (retroceso hacia el Sur).
+     */
+    internal fun tieneDesplazamientoNegativo(trayectoria: List<PuntoTrayectoria>): Boolean {
+        return trayectoria.any { it.x < -EPSILON }
     }
 
     /**
@@ -134,6 +163,7 @@ class GraficadorConsola(
         const val DEFAULT_COLUMNAS: Int = 60
         const val DEFAULT_CARACTER_PROYECTIL: Char = '*'
         const val DEFAULT_CARACTER_FONDO: Char = '.'
+        const val DEFAULT_CARACTER_EJE_ORIGEN: Char = '|'
         const val EPSILON: Double = 1e-6
     }
 }
