@@ -15,9 +15,9 @@ import condiciones.io.LectorConsola
  */
 class SesionConsolaCondiciones(
     private val escritor: EscritorConsola = EscritorConsolaEstandar(),
-    private val presentador: PresentadorRosaVientosService = PresentadorRosaVientosService(escritor),
-    private val solicitador: SolicitadorEntradaService = SolicitadorEntradaService()
-) {
+    private val presentador: PresentadorRosaVientos = PresentadorRosaVientosService(escritor),
+    private val solicitador: SolicitadorEntrada = SolicitadorEntradaService()
+) : SesionCondiciones {
 
     constructor(
         lector: LectorConsola,
@@ -28,11 +28,11 @@ class SesionConsolaCondiciones(
         solicitador = SolicitadorEntradaService(lector, escritor)
     )
 
-    fun mostrarGuiaRosaDeLosVientos() {
+    override fun mostrarGuiaRosaDeLosVientos() {
         presentador.mostrarRosaDeLosVientos()
     }
 
-    fun capturarParametrosCondiciones(): List<Double> {
+    override fun capturarParametrosCondiciones(): List<Double> {
         escritor.escribirLinea("--- INGRESO DE CONDICIONES INICIALES ---")
         val direccionGrados = solicitador.solicitarDireccionViento()
         val velocidadViento = solicitador.solicitarVelocidadViento()
@@ -41,7 +41,7 @@ class SesionConsolaCondiciones(
         return listOf(direccionGrados, velocidadViento, pesoProyectil)
     }
 
-    fun mostrarReporte(condiciones: CondicionesIniciales) {
+    override fun mostrarReporte(condiciones: CondicionesIniciales) {
         presentador.mostrarReporteFinal(condiciones)
     }
 }

@@ -3,7 +3,9 @@ package condiciones
 import condiciones.dominio.CondicionesIniciales
 import condiciones.io.EscritorConsola
 import condiciones.io.LectorConsola
+import condiciones.servicio.EnsambladorCondiciones
 import condiciones.servicio.EnsambladorCondicionesService
+import condiciones.ui.SesionCondiciones
 import condiciones.ui.SesionConsolaCondiciones
 
 /**
@@ -11,12 +13,12 @@ import condiciones.ui.SesionConsolaCondiciones
  *
  * Cumplimiento de principios POO y SOLID:
  * - Single Responsibility Principle (SRP): Coordina exclusivamente la secuencia de alto nivel entre
- *   la sesión de consola ([SesionConsolaCondiciones]) y el ensamblador de dominio ([EnsambladorCondicionesService]).
+ *   la sesión de consola ([SesionCondiciones]) y el ensamblador de dominio ([EnsambladorCondiciones]).
  * - Alta Cohesión y Bajo Acoplamiento: No mezcla reglas de validación, cálculo trigonométrico ni formato de texto.
  */
 class ConfiguradorCondicionesApp(
-    private val sesion: SesionConsolaCondiciones = SesionConsolaCondiciones(),
-    private val ensamblador: EnsambladorCondicionesService = EnsambladorCondicionesService()
+    private val sesion: SesionCondiciones = SesionConsolaCondiciones(),
+    private val ensamblador: EnsambladorCondiciones = EnsambladorCondicionesService()
 ) {
 
     /**

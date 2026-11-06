@@ -18,7 +18,7 @@ class EstadoCinematica3D(
     anguloGrados: Double,
     private val dt: Double,
     private val coeficienteRestitucion: Double
-) {
+) : EstadoCinematica {
     private var x: Double = 0.0
     private var y: Double = 0.0
     private var z: Double = 0.0
@@ -29,7 +29,7 @@ class EstadoCinematica3D(
     /**
      * Evalúa las aceleraciones aerodinámica y gravitatoria e integra un diferencial de tiempo [dt].
      */
-    fun avanzarSubPaso(g: Double, factorArrastre: Double, vientoX: Double, vientoZ: Double): Double {
+    override fun avanzarSubPaso(g: Double, factorArrastre: Double, vientoX: Double, vientoZ: Double): Double {
         vx += -factorArrastre * (vx - vientoX) * dt
         vy += (-g - factorArrastre * vy) * dt
         vz += -factorArrastre * (vz - vientoZ) * dt
@@ -43,7 +43,7 @@ class EstadoCinematica3D(
      * Registra las alturas máximas y evalúa el contacto con el suelo.
      * Retorna `true` si el proyectil alcanzó el estado de reposo definitivo.
      */
-    fun registrarImpacto(piques: MutableList<Double>, metricas: DoubleArray): Boolean {
+    override fun registrarImpacto(piques: MutableList<Double>, metricas: DoubleArray): Boolean {
         metricas[0] = max(metricas[0], y)
         metricas[1] = max(metricas[1], y)
         val contacto = evaluarContactoSuelo()
@@ -58,7 +58,7 @@ class EstadoCinematica3D(
      * Verifica si el proyectil tocó el suelo (Y <= 0) con velocidad descendente.
      * Retorna 0 si sigue en el aire, 1 si rebota y -1 si queda en reposo.
      */
-    fun evaluarContactoSuelo(): Int {
+    override fun evaluarContactoSuelo(): Int {
         if (y > 0.0) return 0
         y = 0.0
         if (vy >= 0.0) return 0
@@ -79,7 +79,7 @@ class EstadoCinematica3D(
     /**
      * Construye una instantánea inmutable [PuntoTrayectoria] para el instante indicado.
      */
-    fun crearPunto(tiempo: Double): PuntoTrayectoria {
+    override fun crearPunto(tiempo: Double): PuntoTrayectoria {
         return PuntoTrayectoria(tiempo = tiempo, x = x, y = max(0.0, y), z = z, vx = vx, vy = vy, vz = vz)
     }
 }

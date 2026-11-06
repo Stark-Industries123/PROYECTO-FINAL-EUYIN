@@ -3,6 +3,7 @@ package condiciones.ui
 import condiciones.io.EscritorConsola
 import condiciones.io.EscritorConsolaEstandar
 import condiciones.io.LectorConsola
+import condiciones.servicio.EnsambladorCondiciones
 import condiciones.servicio.EnsambladorCondicionesService
 import config.ConfigSimulacion
 
@@ -16,10 +17,10 @@ import config.ConfigSimulacion
  *   ni formatea reportes de impacto.
  */
 class ConfiguradorSimulacionConsola(
-    private val solicitador: SolicitadorEntradaService = SolicitadorEntradaService(),
-    private val ensamblador: EnsambladorCondicionesService = EnsambladorCondicionesService(),
+    private val solicitador: SolicitadorEntrada = SolicitadorEntradaService(),
+    private val ensamblador: EnsambladorCondiciones = EnsambladorCondicionesService(),
     private val escritor: EscritorConsola = EscritorConsolaEstandar()
-) {
+) : ConfiguradorSimulacion {
 
     constructor(
         lector: LectorConsola,
@@ -34,7 +35,7 @@ class ConfiguradorSimulacionConsola(
      * Solicita interactivamente los parámetros en un flujo continuo por consola y retorna
      * un [ConfigSimulacion] completamente inicializado.
      */
-    fun solicitarConfiguracion(): ConfigSimulacion {
+    override fun solicitarConfiguracion(): ConfigSimulacion {
         escritor.escribirLinea("=== CONFIGURACIÓN DE LA SIMULACIÓN DE TIRO PARABÓLICO ===")
         val planeta = solicitador.solicitarPlaneta()
         val velocidad = solicitador.solicitarVelocidadInicial()

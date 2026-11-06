@@ -14,12 +14,12 @@ import condiciones.dominio.Viento
  */
 class EnsambladorCondicionesService(
     private val calculadorRumbo: CalculadorRumboService = CalculadorRumboRosa32Service()
-) {
+) : EnsambladorCondiciones {
 
     /**
      * Calcula el rumbo náutico exacto del viento y ensambla [CondicionesIniciales].
      */
-    fun ensamblar(
+    override fun ensamblar(
         direccionGrados: Double,
         velocidadViento: Double,
         pesoProyectil: Double
@@ -32,7 +32,7 @@ class EnsambladorCondicionesService(
     /**
      * Construye la entidad [Viento] asociando el rumbo calculado por [calculadorRumbo].
      */
-    fun crearViento(direccionGrados: Double, velocidadViento: Double): Viento {
+    override fun crearViento(direccionGrados: Double, velocidadViento: Double): Viento {
         val rumbo = calculadorRumbo.calcularRumbo(direccionGrados)
         return Viento(direccionGrados = direccionGrados, velocidad = velocidadViento, rumbo = rumbo)
     }
@@ -40,7 +40,7 @@ class EnsambladorCondicionesService(
     /**
      * Construye la entidad [Proyectil] verificando la disponibilidad del servicio de rumbos.
      */
-    fun crearProyectil(pesoProyectil: Double): Proyectil {
+    override fun crearProyectil(pesoProyectil: Double): Proyectil {
         val puntosDisponibles = calculadorRumbo.obtenerPuntos().size
         return if (puntosDisponibles >= 0) Proyectil(pesoKg = pesoProyectil) else Proyectil(pesoProyectil)
     }

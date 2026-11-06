@@ -2,6 +2,7 @@ package fisicas.motor
 
 import config.ConfigSimulacion
 import fisicas.gravedad.FuenteGravedad
+import fisicas.gravedad.Tierra
 
 /**
  * Motor físico encargado de simular la dinámica tridimensional del tiro de un proyectil
@@ -9,38 +10,33 @@ import fisicas.gravedad.FuenteGravedad
  * rebote contra el suelo.
  *
  * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Su única responsabilidad es validar los coeficientes
- *   físicos del simulador y coordinar el cálculo de trayectoria delegando la integración
- *   numérica a [IntegradorCinematica3D].
+ * - Single Responsibility Principle (SRP): Su única responsabilidad es validar los parámetros
+ *   iniciales y coordinar el cálculo de trayectoria delegando la integración
+ *   numérica a la abstracción [IntegradorCinematica].
  */
 class Simulador(
     private val gravedadFoco: FuenteGravedad,
-    private val coeficienteRestitucion: Double = 0.75,
-    private val coeficienteArrastre: Double = 0.05,
-    private val pasoTiempoMuestreo: Double = 0.1
+    private val integrador: IntegradorCinematica
 ) : CalculadorTrayectoria {
 
-    init {
-        require(coeficienteRestitucion in 0.0..1.0) {
-            "El coeficiente de restitución debe estar entre 0.0 y 1.0 (recibido: $coeficienteRestitucion)."
-        }
-        require(coeficienteArrastre >= 0.0) {
-            "El coeficiente de arrastre aerodinámico debe ser mayor o igual a 0 (recibido: $coeficienteArrastre)."
-        }
-        require(pasoTiempoMuestreo > 0.0) {
-            "El paso de tiempo de muestreo debe ser estrictamente mayor a 0 (recibido: $pasoTiempoMuestreo)."
-        }
-    }
+    constructor(
+        gravedadFoco: FuenteGravedad = Tierra(),
+        coeficienteRestitucion: Double = 0.75,
+        coeficienteArrastre: Double = 0.05,
+        pasoTiempoMuestreo: Double = 0.1
+    ) : this(
+        gravedadFoco = gravedadFoco,
+        integrador = IntegradorCinematica3D(coeficienteRestitucion, coeficienteArrastre, pasoTiempoMuestreo)
+    )
 
     /**
      * Calcula la trayectoria completa del proyectil a partir del objeto inmutable [ConfigSimulacion].
      */
     override fun calcularTrayectoria(config: ConfigSimulacion): ResultadoSimulacion {
-        if (config.velocidadInicial <= 0.0 || config.angulo <= 0.0 || gravedadFoco.gravedad <= 0.0) {
+        if (config.velocidadInicial <= 0.0 || config.angulo <= 0.0 || config.fuenteGravedad.gravedad <= 0.0 || gravedadFoco.gravedad <= 0.0) {
             val puntoInicial = PuntoTrayectoria(0.0, 0.0, 0.0)
             return ResultadoSimulacion(0.0, 0.0, 0.0, listOf(puntoInicial))
         }
-        val integrador = IntegradorCinematica3D(coeficienteRestitucion, coeficienteArrastre, pasoTiempoMuestreo)
         return integrador.simular(config)
     }
 

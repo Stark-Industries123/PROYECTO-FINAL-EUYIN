@@ -14,12 +14,12 @@ import condiciones.dominio.PuntoRosaVientos
 class CatalogoRosaVientos32(
     private val amplitudGrados: Double = 11.25,
     private val semiAmplitudGrados: Double = 5.625
-) {
+) : CatalogoRosaVientos {
 
     /**
      * Construye y retorna la lista inmutable de los 32 puntos náuticos ordenados de 0° a 348.75°.
      */
-    fun construirPuntos(): List<PuntoRosaVientos> {
+    override fun construirPuntos(): List<PuntoRosaVientos> {
         if (amplitudGrados <= 0.0 || semiAmplitudGrados <= 0.0) return emptyList()
         val cuadrantes = CuadranteRosa.entries
         val grupos = listOf(
