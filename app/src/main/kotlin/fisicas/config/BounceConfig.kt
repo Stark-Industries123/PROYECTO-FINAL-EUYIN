@@ -1,16 +1,13 @@
 package fisicas.config
 
+import fisicas.vector.Vector2D
+
 /**
  * Encapsula los parámetros físicos para la simulación del impacto y rebote contra el suelo (Y <= 0).
  *
- * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Modela únicamente los coeficientes que rigen la pérdida
- *   de energía cinética durante el choque con la superficie.
- * - Inmutabilidad (POO): Parámetros constantes y validados que previenen estados inconsistentes.
- *
  * @property coeficienteRestitucion Factor e de conservación de velocidad vertical post-impacto (0.0 a 1.0).
- * @property friccionSuelo Factor de conservación de velocidad horizontal post-impacto (0.0 a 1.0, por defecto 1.0 sin fricción adicional).
- * @property umbralReposo Umbral de rapidez total (epsilon) por debajo del cual el proyectil pasa al reposo absoluto (m/s).
+ * @property friccionSuelo Factor de conservación de velocidad horizontal post-impacto (0.0 a 1.0).
+ * @property umbralReposo Umbral de rapidez total por debajo del cual el proyectil pasa al reposo absoluto (m/s).
  */
 data class BounceConfig(
     val coeficienteRestitucion: Double = DEFAULT_COEFICIENTE_RESTITUCION,
@@ -28,6 +25,16 @@ data class BounceConfig(
             "El umbral de reposo debe ser mayor o igual a 0.0 (recibido: $umbralReposo)."
         }
     }
+
+    /**
+     * Calcula el nuevo vector de velocidad aplicando restitución vertical y fricción horizontal.
+     */
+    fun calcularVelocidadRebote(velocidad: Vector2D): Vector2D = Vector2D(velocidad.x * friccionSuelo, -coeficienteRestitucion * velocidad.y)
+
+    /**
+     * Evalúa si una velocidad post-impacto está por debajo del umbral de reposo.
+     */
+    fun debeDetenerse(velocidad: Vector2D): Boolean = velocidad.magnitud() < umbralReposo && coeficienteRestitucion >= 0.0
 
     companion object {
         const val DEFAULT_COEFICIENTE_RESTITUCION: Double = 0.75

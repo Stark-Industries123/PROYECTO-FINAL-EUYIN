@@ -11,18 +11,15 @@ import kotlin.test.assertTrue
  */
 class PuntoRosaVientosTest {
 
+    private fun crearPunto(indice: Int, codigo: String, nombre: String, angulo: Double): PuntoRosaVientos {
+        val min = if (angulo == 0.0) 354.375 else angulo - 5.625
+        val max = angulo + 5.625
+        return PuntoRosaVientos(indice, codigo, nombre, angulo, min, max, CuadranteRosa.NORTE_A_ESTE)
+    }
+
     @Test
     fun testCreacionValidaPuntoRosaVientos() {
-        val punto = PuntoRosaVientos(
-            indice = 4,
-            codigo = "NE",
-            nombreCompleto = "Noreste",
-            anguloNominal = 45.0,
-            rangoMinGrados = 39.375,
-            rangoMaxGrados = 50.625,
-            cuadrante = CuadranteRosa.NORTE_A_ESTE
-        )
-
+        val punto = crearPunto(4, "NE", "Noreste", 45.0)
         assertEquals(4, punto.indice)
         assertEquals("NE", punto.codigo)
         assertEquals("Noreste", punto.nombreCompleto)
@@ -33,56 +30,16 @@ class PuntoRosaVientosTest {
     }
 
     @Test
-    fun testValidacionesInvariantes() {
-        assertFailsWith<IllegalArgumentException> {
-            PuntoRosaVientos(
-                indice = -1,
-                codigo = "N",
-                nombreCompleto = "Norte",
-                anguloNominal = 0.0,
-                rangoMinGrados = 354.375,
-                rangoMaxGrados = 5.625,
-                cuadrante = CuadranteRosa.NORTE_A_ESTE
-            )
-        }
-
-        assertFailsWith<IllegalArgumentException> {
-            PuntoRosaVientos(
-                indice = 32,
-                codigo = "N",
-                nombreCompleto = "Norte",
-                anguloNominal = 0.0,
-                rangoMinGrados = 354.375,
-                rangoMaxGrados = 5.625,
-                cuadrante = CuadranteRosa.NORTE_A_ESTE
-            )
-        }
-
-        assertFailsWith<IllegalArgumentException> {
-            PuntoRosaVientos(
-                indice = 0,
-                codigo = "",
-                nombreCompleto = "Norte",
-                anguloNominal = 0.0,
-                rangoMinGrados = 354.375,
-                rangoMaxGrados = 5.625,
-                cuadrante = CuadranteRosa.NORTE_A_ESTE
-            )
-        }
+    fun testValidacionesInvariantesIndiceYTexto() {
+        assertFailsWith<IllegalArgumentException> { crearPunto(-1, "N", "Norte", 0.0) }
+        assertFailsWith<IllegalArgumentException> { crearPunto(32, "N", "Norte", 0.0) }
+        assertFailsWith<IllegalArgumentException> { crearPunto(0, "", "Norte", 0.0) }
+        assertFailsWith<IllegalArgumentException> { crearPunto(0, "N", "", 0.0) }
     }
 
     @Test
     fun testAbarcaAnguloRumboEstandar() {
-        val ne = PuntoRosaVientos(
-            indice = 4,
-            codigo = "NE",
-            nombreCompleto = "Noreste",
-            anguloNominal = 45.0,
-            rangoMinGrados = 39.375,
-            rangoMaxGrados = 50.625,
-            cuadrante = CuadranteRosa.NORTE_A_ESTE
-        )
-
+        val ne = crearPunto(4, "NE", "Noreste", 45.0)
         assertTrue(ne.abarcaAngulo(45.0))
         assertTrue(ne.abarcaAngulo(39.375))
         assertTrue(ne.abarcaAngulo(50.624))
@@ -92,16 +49,7 @@ class PuntoRosaVientosTest {
 
     @Test
     fun testAbarcaAnguloRumboNorteQueCruzaCero() {
-        val norte = PuntoRosaVientos(
-            indice = 0,
-            codigo = "N",
-            nombreCompleto = "Norte",
-            anguloNominal = 0.0,
-            rangoMinGrados = 354.375,
-            rangoMaxGrados = 5.625,
-            cuadrante = CuadranteRosa.NORTE_A_ESTE
-        )
-
+        val norte = crearPunto(0, "N", "Norte", 0.0)
         assertTrue(norte.abarcaAngulo(0.0))
         assertTrue(norte.abarcaAngulo(360.0))
         assertTrue(norte.abarcaAngulo(355.0))
@@ -112,16 +60,7 @@ class PuntoRosaVientosTest {
 
     @Test
     fun testCalcularDesviacion() {
-        val este = PuntoRosaVientos(
-            indice = 8,
-            codigo = "E",
-            nombreCompleto = "Este",
-            anguloNominal = 90.0,
-            rangoMinGrados = 84.375,
-            rangoMaxGrados = 95.625,
-            cuadrante = CuadranteRosa.NORTE_A_ESTE
-        )
-
+        val este = crearPunto(8, "E", "Este", 90.0)
         assertEquals(0.0, este.calcularDesviacion(90.0), 0.001)
         assertEquals(2.0, este.calcularDesviacion(92.0), 0.001)
         assertEquals(-2.0, este.calcularDesviacion(88.0), 0.001)

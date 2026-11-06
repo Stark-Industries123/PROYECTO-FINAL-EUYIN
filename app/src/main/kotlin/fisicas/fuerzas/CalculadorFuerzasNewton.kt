@@ -11,37 +11,14 @@ import fisicas.vector.Vector2D
  * Cumplimiento de principios POO y SOLID:
  * - Single Responsibility Principle (SRP): Responsable exclusivamente de aplicar las leyes de Newton
  *   para calcular la aceleración neta a partir de las fuerzas del modelo.
- * - Liskov Substitution Principle (LSP): Cumple completamente el contrato [CalculadorFuerzas].
- *
- * Ecuaciones implementadas:
- * - F_drag = -k * v  => (Fdrag_x = -k * vx, Fdrag_y = -k * vy)
- * - F_viento = viento.aVector()
- * - ax = (Fdrag_x + Fviento_x) / m
- * - ay = -gravedad + (Fdrag_y + Fviento_y) / m
  */
 class CalculadorFuerzasNewton : CalculadorFuerzas {
 
-    override fun calcularAceleracion(
-        estado: ProjectileState,
-        proyectil: ProjectileConfig,
-        entorno: EnvironmentConfig
-    ): Vector2D {
-        val m = proyectil.masa
-        val k = proyectil.coeficienteArrastre
-        val gravedad = entorno.fuenteGravedad.gravedad
-
-        // Fuerza de arrastre opuesta a la velocidad: F_drag = -k * v
-        val fDrag = estado.velocidad * (-k)
-
-        // Vector de fuerza eólica
+    override fun calcularAceleracion(estado: ProjectileState, proyectil: ProjectileConfig, entorno: EnvironmentConfig): Vector2D {
+        val fDrag = proyectil.calcularFuerzaArrastre(estado.velocidad)
         val fViento = entorno.viento.aVector()
-
-        // Segunda Ley de Newton: ax = (Fdrag_x + Fviento_x) / m
-        val ax = (fDrag.x + fViento.x) / m
-
-        // ay = -gravedad + (Fdrag_y + Fviento_y) / m
-        val ay = -gravedad + (fDrag.y + fViento.y) / m
-
+        val ax = (fDrag.x + fViento.x) / proyectil.masa
+        val ay = -entorno.obtenerGravedad() + (fDrag.y + fViento.y) / proyectil.masa
         return Vector2D(ax, ay)
     }
 }

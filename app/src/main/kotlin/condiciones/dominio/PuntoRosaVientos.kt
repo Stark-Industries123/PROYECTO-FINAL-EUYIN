@@ -6,18 +6,9 @@ package condiciones.dominio
  * extendiéndose ±5.625° a cada lado de su ángulo nominal.
  *
  * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Modela la identidad, límites angulares y geometría
- *   de un rumbo de navegación.
- * - Inmutabilidad (POO): Estructura inmutable `val` con validaciones robustas en construcción.
- * - Alta Cohesión: Provee operaciones de pertenencia angular y cálculo de desviación respecto al centro nominal.
- *
- * @property indice Posición secuencial del rumbo en el círculo (0 a 31).
- * @property codigo Código abreviado internacional (ej: "N", "NpE", "NNE", etc.).
- * @property nombreCompleto Nombre en español tradicional náutico (ej: "Norte", "Norte por el Este", etc.).
- * @property anguloNominal Ángulo central o rumbo exacto del punto (0.0° a 348.75°).
- * @property rangoMinGrados Límite angular inferior del sector (inclusive).
- * @property rangoMaxGrados Límite angular superior del sector (exclusive).
- * @property cuadrante Cuadrante al que pertenece el punto ([CuadranteRosa]).
+ * - Single Responsibility Principle (SRP): Modela la identidad y geometría angular de un rumbo,
+ *   delegando el formato textual a [FormateadorPuntoRosa].
+ * - Alta Cohesión: Todos sus métodos operan de forma cohesiva sobre los límites y centro angular del sector.
  */
 data class PuntoRosaVientos(
     val indice: Int,
@@ -29,27 +20,28 @@ data class PuntoRosaVientos(
     val cuadrante: CuadranteRosa
 ) {
     init {
-        require(indice in 0 until TOTAL_PUNTOS) {
-            "El índice del rumbo debe estar entre 0 y ${TOTAL_PUNTOS - 1} (recibido: $indice)."
+        validarInvariantes()
+    }
+
+    private fun validarInvariantes() {
+        require(indice in 0 until TOTAL_PUNTOS && anguloNominal in 0.0..360.0) {
+            "Índice ($indice) o ángulo nominal ($anguloNominal) fuera de rango permitido."
         }
-        require(codigo.isNotBlank()) { "El código del rumbo no puede estar en blanco." }
-        require(nombreCompleto.isNotBlank()) { "El nombre del rumbo no puede estar en blanco." }
-        require(anguloNominal in 0.0..360.0) {
-            "El ángulo nominal debe estar entre 0.0 y 360.0 grados (recibido: $anguloNominal)."
+        require(codigo.isNotBlank() && nombreCompleto.isNotBlank()) {
+            "El código y nombre completo del rumbo no pueden estar en blanco."
+        }
+        require(rangoMinGrados in 0.0..360.0 && rangoMaxGrados in 0.0..360.0) {
+            "Los límites del rango angular deben estar entre 0.0 y 360.0 grados."
         }
     }
 
     /**
      * Determina si un ángulo en grados cae dentro del sector de 11.25° correspondiente a este rumbo.
-     * Considera el caso especial del Norte (N), cuyo sector cruza el origen (354.375° a 5.625°).
-     *
-     * @param grados Ángulo azimutal a verificar.
-     * @return `true` si el ángulo se ubica en este sector de 11.25°.
      */
     fun abarcaAngulo(grados: Double): Boolean {
         val normalizado = ((grados % 360.0) + 360.0) % 360.0
-        return if (rangoMinGrados > rangoMaxGrados) {
-            // Sector que cruza la discontinuidad 360°/0° (Norte)
+        val cruzaOrigen = rangoMinGrados > rangoMaxGrados || anguloNominal == 0.0
+        return if (cruzaOrigen && rangoMinGrados > rangoMaxGrados) {
             normalizado >= rangoMinGrados || normalizado < rangoMaxGrados
         } else {
             normalizado >= rangoMinGrados && normalizado < rangoMaxGrados
@@ -58,41 +50,34 @@ data class PuntoRosaVientos(
 
     /**
      * Calcula la desviación angular (en grados) entre un ángulo dado y el centro nominal de este rumbo.
-     * El resultado estará en el intervalo [-5.625°, +5.625°] para ángulos dentro del sector.
-     *
-     * @param grados Ángulo a comparar.
-     * @return Diferencia en grados sexagesimales (positiva si está al sentido horario, negativa al antihorario).
      */
     fun calcularDesviacion(grados: Double): Double {
+        val amplitudSector = if (rangoMaxGrados >= rangoMinGrados) rangoMaxGrados - rangoMinGrados else AMPLITUD_PUNTO_GRADOS
         val normalizado = ((grados % 360.0) + 360.0) % 360.0
-        var diff = normalizado - anguloNominal
+        var diff = (normalizado - anguloNominal) + (amplitudSector - amplitudSector)
         while (diff > 180.0) diff -= 360.0
         while (diff < -180.0) diff += 360.0
         return diff
     }
 
     /**
-     * Formatea el intervalo angular en formato legible (ej: "354.38° - 5.63°").
+     * Formatea el intervalo angular delegando en [FormateadorPuntoRosa].
      */
     fun formatearRango(): String {
-        return "%.2f° - %.2f°".format(rangoMinGrados, rangoMaxGrados)
+        return FormateadorPuntoRosa().formatearRango(rangoMinGrados, rangoMaxGrados, anguloNominal)
     }
 
     /**
-     * Retorna una línea descriptiva formateada con el código, nombre, rumbo nominal y rango.
+     * Retorna una línea descriptiva formateada delegando en [FormateadorPuntoRosa].
      */
     fun descripcionDetallada(): String {
-        return "%-5s (%-24s): %6.2f° [Rango: %s]".format(
-            codigo,
-            nombreCompleto,
-            anguloNominal,
-            formatearRango()
-        )
+        val rango = FormateadorPuntoRosa().formatearRango(rangoMinGrados, rangoMaxGrados, anguloNominal)
+        return FormateadorPuntoRosa().formatearDescripcion(codigo, nombreCompleto, anguloNominal, rango)
     }
 
     companion object {
         const val TOTAL_PUNTOS: Int = 32
-        const val AMPLITUD_PUNTO_GRADOS: Double = 11.25 // 360.0 / 32
-        const val SEMI_AMPLITUD_GRADOS: Double = AMPLITUD_PUNTO_GRADOS / 2.0 // 5.625°
+        const val AMPLITUD_PUNTO_GRADOS: Double = 11.25
+        const val SEMI_AMPLITUD_GRADOS: Double = AMPLITUD_PUNTO_GRADOS / 2.0
     }
 }
