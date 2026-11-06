@@ -4,7 +4,10 @@ import config.ConfigSimulacion
 import fisicas.fuerzas.CalculadorArrastreAerodinamico
 import fisicas.fuerzas.CalculadorFuerzaAerodinamica
 import fisicas.gravedad.FuenteGravedad
+arreglador-solid-letra-s
+import fisicas.gravedad.Tierra
 arreglador-solid
+main
 
 /**
  * Motor físico encargado de simular la dinámica tridimensional del tiro de un proyectil
@@ -12,17 +15,25 @@ arreglador-solid
  * rebote contra el suelo.
  *
  * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Su única responsabilidad es validar los coeficientes
- *   físicos del simulador y coordinar el cálculo de trayectoria delegando la integración
- *   numérica a [IntegradorCinematica3D].
+ * - Single Responsibility Principle (SRP): Su única responsabilidad es validar los parámetros
+ *   iniciales y coordinar el cálculo de trayectoria delegando la integración
+ *   numérica a la abstracción [IntegradorCinematica].
  */
 class Simulador(
     private val gravedadFoco: FuenteGravedad,
-    private val coeficienteRestitucion: Double = 0.75,
-    private val coeficienteArrastre: Double = 0.05,
-    private val pasoTiempoMuestreo: Double = 0.1
+    private val integrador: IntegradorCinematica
 ) : CalculadorTrayectoria {
 
+arreglador-solid-letra-s
+    constructor(
+        gravedadFoco: FuenteGravedad = Tierra(),
+        coeficienteRestitucion: Double = 0.75,
+        coeficienteArrastre: Double = 0.05,
+        pasoTiempoMuestreo: Double = 0.1
+    ) : this(
+        gravedadFoco = gravedadFoco,
+        integrador = IntegradorCinematica3D(coeficienteRestitucion, coeficienteArrastre, pasoTiempoMuestreo)
+    )
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
@@ -91,17 +102,17 @@ main
             "El área transversal debe ser mayor o igual a 0 (recibido: $areaTransversal)."
         }
     }
+main
 
     /**
 arreglador-solid
      * Calcula la trayectoria completa del proyectil a partir del objeto inmutable [ConfigSimulacion].
      */
     override fun calcularTrayectoria(config: ConfigSimulacion): ResultadoSimulacion {
-        if (config.velocidadInicial <= 0.0 || config.angulo <= 0.0 || gravedadFoco.gravedad <= 0.0) {
+        if (config.velocidadInicial <= 0.0 || config.angulo <= 0.0 || config.fuenteGravedad.gravedad <= 0.0 || gravedadFoco.gravedad <= 0.0) {
             val puntoInicial = PuntoTrayectoria(0.0, 0.0, 0.0)
             return ResultadoSimulacion(0.0, 0.0, 0.0, listOf(puntoInicial))
         }
-        val integrador = IntegradorCinematica3D(coeficienteRestitucion, coeficienteArrastre, pasoTiempoMuestreo)
         return integrador.simular(config)
     }
 

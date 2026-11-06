@@ -13,7 +13,7 @@ import condiciones.dominio.PuntoRosaVientos
  * - Alta Cohesión: Todos sus métodos operan sobre la colección inmutable [puntos].
  */
 class CalculadorRumboRosa32Service(
-    catalogo: CatalogoRosaVientos32 = CatalogoRosaVientos32()
+    catalogo: CatalogoRosaVientos = CatalogoRosaVientos32()
 ) : CalculadorRumboService {
 
     private val puntos: List<PuntoRosaVientos> = catalogo.construirPuntos()

@@ -15,8 +15,8 @@ import fisicas.fuerzas.CalculadorFuerzas
  *   delegando el cálculo de fuerzas en [CalculadorFuerzas] y el impacto en [ManejadorColision].
  */
 class PhysicsEngineImpl(
-    private val calculadorFuerzas: CalculadorFuerzas = CalculadorFuerzas.porDefecto(),
-    private val manejadorColision: ManejadorColision = ManejadorColision.porDefecto(),
+    private val calculadorFuerzas: CalculadorFuerzas,
+    private val manejadorColision: ManejadorColision,
     private val tiempoMaximo: Double = 300.0
 ) : PhysicsEngine {
 

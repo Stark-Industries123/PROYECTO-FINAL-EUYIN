@@ -16,18 +16,33 @@ import kotlin.math.sin
  *   temporal de muestreo y sub-integración para construir [ResultadoSimulacion].
  */
 class IntegradorCinematica3D(
-    private val coeficienteRestitucion: Double,
-    private val coeficienteArrastre: Double,
-    private val pasoTiempoMuestreo: Double
-) {
+    private val coeficienteRestitucion: Double = 0.75,
+    private val coeficienteArrastre: Double = 0.05,
+    private val pasoTiempoMuestreo: Double = 0.1,
+    private val proveedorEstado: (Double, Double, Double, Double) -> EstadoCinematica = { v0, ang, dt, rest ->
+        EstadoCinematica3D(v0, ang, dt, rest)
+    }
+) : IntegradorCinematica {
+
+    init {
+        require(coeficienteRestitucion in 0.0..1.0) {
+            "El coeficiente de restitución debe estar entre 0.0 y 1.0 (recibido: $coeficienteRestitucion)."
+        }
+        require(coeficienteArrastre >= 0.0) {
+            "El coeficiente de arrastre aerodinámico debe ser mayor o igual a 0 (recibido: $coeficienteArrastre)."
+        }
+        require(pasoTiempoMuestreo > 0.0) {
+            "El paso de tiempo de muestreo debe ser estrictamente mayor a 0 (recibido: $pasoTiempoMuestreo)."
+        }
+    }
 
     /**
      * Ejecuta la integración numérica completa para la configuración dada.
      */
-    fun simular(config: ConfigSimulacion): ResultadoSimulacion {
+    override fun simular(config: ConfigSimulacion): ResultadoSimulacion {
         val subPasos = max(1, (pasoTiempoMuestreo / 0.001).toInt())
         val dt = pasoTiempoMuestreo / subPasos
-        val estado = EstadoCinematica3D(config.velocidadInicial, config.angulo, dt, coeficienteRestitucion)
+        val estado = proveedorEstado(config.velocidadInicial, config.angulo, dt, coeficienteRestitucion)
         val trayectoria = mutableListOf(estado.crearPunto(0.0))
         val piques = mutableListOf<Double>()
         val metricas = ejecutarSimulacion(config, estado, trayectoria, piques)
@@ -44,7 +59,7 @@ class IntegradorCinematica3D(
 
     private fun ejecutarSimulacion(
         config: ConfigSimulacion,
-        estado: EstadoCinematica3D,
+        estado: EstadoCinematica,
         trayectoria: MutableList<PuntoTrayectoria>,
         piques: MutableList<Double>
     ): DoubleArray {
@@ -62,7 +77,7 @@ class IntegradorCinematica3D(
 
     private fun ejecutarVentanaMuestreo(
         config: ConfigSimulacion,
-        estado: EstadoCinematica3D,
+        estado: EstadoCinematica,
         piques: MutableList<Double>,
         metricas: DoubleArray
     ): Boolean {

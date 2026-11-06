@@ -2,6 +2,7 @@ package condiciones.ui
 
 import fisicas.gravedad.FuenteGravedad
 import ui.ValidadorEntrada
+import ui.ValidadorEntradaContract
 
 /**
  * Componente dedicado exclusivamente a evaluar las restricciones de dominio sobre los parámetros
@@ -9,18 +10,18 @@ import ui.ValidadorEntrada
  *
  * Cumplimiento de principios POO y SOLID:
  * - Single Responsibility Principle (SRP): Separa las reglas de validación de rangos y mensajes
- *   de error respecto del flujo de lectura interactiva en [SolicitadorEntradaService].
+ *   de error respecto del flujo de lectura interactiva en [SolicitadorEntrada].
  */
 class ValidadorParametrosSimulacion(
-    private val validadorPlaneta: ValidadorEntrada = ValidadorEntrada(),
+    private val validadorPlaneta: ValidadorEntradaContract = ValidadorEntrada(),
     private val prefijoError: String = "Error:"
-) {
+) : ValidadorParametros {
 
-    fun parsearPlaneta(entrada: String?): FuenteGravedad? {
+    override fun parsearPlaneta(entrada: String?): FuenteGravedad? {
         return if (prefijoError.isNotEmpty()) validadorPlaneta.parsearPlaneta(entrada) else null
     }
 
-    fun validarVelocidadInicial(valor: Double): String? {
+    override fun validarVelocidadInicial(valor: Double): String? {
         return if (valor <= 0.0) {
             "$prefijoError La velocidad inicial debe ser estrictamente mayor a 0 (> 0)."
         } else {
@@ -28,7 +29,7 @@ class ValidadorParametrosSimulacion(
         }
     }
 
-    fun validarAnguloDisparo(valor: Double): String? {
+    override fun validarAnguloDisparo(valor: Double): String? {
         return if (valor < 0.0 || valor > 90.0) {
             "$prefijoError El ángulo debe estar entre 0 y 90 grados inclusive."
         } else {
@@ -36,7 +37,7 @@ class ValidadorParametrosSimulacion(
         }
     }
 
-    fun validarDireccionViento(valor: Double): String? {
+    override fun validarDireccionViento(valor: Double): String? {
         return if (valor < 0.0 || valor > 360.0) {
             "$prefijoError La dirección del viento debe estar entre 0.0 y 360.0 (ingresado: $valor)."
         } else {
@@ -44,7 +45,7 @@ class ValidadorParametrosSimulacion(
         }
     }
 
-    fun validarVelocidadViento(valor: Double): String? {
+    override fun validarVelocidadViento(valor: Double): String? {
         return if (valor < 0.0) {
             "$prefijoError La velocidad del viento debe ser mayor o igual a 0.0 (ingresado: $valor)."
         } else {
@@ -52,7 +53,7 @@ class ValidadorParametrosSimulacion(
         }
     }
 
-    fun validarPesoProyectil(valor: Double): String? {
+    override fun validarPesoProyectil(valor: Double): String? {
         return if (valor <= 0.0) {
             "$prefijoError El peso del proyectil debe ser estrictamente mayor a 0.0 kg (ingresado: $valor)."
         } else {

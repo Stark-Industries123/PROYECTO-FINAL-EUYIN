@@ -18,12 +18,12 @@ class SelectorPlaneta(
     private val opcionMinima: Int = OPCION_TIERRA,
     private val opcionMaxima: Int = OPCION_JUPITER,
     private val catalogoPlanetas: Map<Int, () -> FuenteGravedad> = CATALOGO_DEFECTO
-) {
+) : SelectorPlanetaContract {
 
     /**
      * Parsea el texto ingresado y retorna la [FuenteGravedad] si corresponde a una opción válida (1 a 4).
      */
-    fun seleccionar(entrada: String?): FuenteGravedad? {
+    override fun seleccionar(entrada: String?): FuenteGravedad? {
         val opcion = entrada?.trim()?.toIntOrNull() ?: return null
         if (opcion < opcionMinima || opcion > opcionMaxima) {
             return null

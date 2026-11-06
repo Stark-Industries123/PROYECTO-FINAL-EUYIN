@@ -19,16 +19,16 @@ import condiciones.servicio.CalculadorRumboService
 class PresentadorRosaVientosService(
     private val escritor: EscritorConsola = EscritorConsolaEstandar(),
     private val calculadorRumbo: CalculadorRumboService = CalculadorRumboRosa32Service()
-) {
+) : PresentadorRosaVientos {
 
-    fun mostrarGuiaGeneralViento() {
+    override fun mostrarGuiaGeneralViento() {
         escritor.escribirLinea("Norte: 315° a 45°")
         escritor.escribirLinea("Este: 45° a 135°")
         escritor.escribirLinea("Sur: 135° a 225°")
         escritor.escribirLinea("Oeste: 225° a 315°")
     }
 
-    fun mostrarRosaDeLosVientos() {
+    override fun mostrarRosaDeLosVientos() {
         mostrarEncabezadoRosa()
         val puntos = calculadorRumbo.obtenerPuntos()
         val porCuadrante = calculadorRumbo.obtenerPuntosPorCuadrante()
@@ -79,7 +79,7 @@ class PresentadorRosaVientosService(
         escritor.escribirLinea("   • ${punto.descripcionDetallada()}")
     }
 
-    fun mostrarReporteFinal(condiciones: CondicionesIniciales) {
+    override fun mostrarReporteFinal(condiciones: CondicionesIniciales) {
         mostrarEncabezadoReporte()
         mostrarSeccionProyectil(condiciones)
         mostrarSeccionVientoBasica(condiciones)

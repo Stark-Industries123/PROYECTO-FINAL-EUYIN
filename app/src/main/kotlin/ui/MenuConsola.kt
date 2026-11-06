@@ -22,7 +22,7 @@ class MenuConsola(
     private val lector: () -> String? = LECTOR_DEFECTO,
     private val escritor: (String) -> Unit = ESCRITOR_DEFECTO,
     private val escritorLinea: (String) -> Unit = ESCRITOR_LINEA_DEFECTO,
-    private val validador: ValidadorEntrada = VALIDADOR_DEFECTO
+    private val validador: ValidadorEntradaContract = VALIDADOR_DEFECTO
 ) {
 
     /**
@@ -141,7 +141,7 @@ class MenuConsola(
         private val LECTOR_DEFECTO: () -> String? = { readlnOrNull() }
         private val ESCRITOR_DEFECTO: (String) -> Unit = { print(it) }
         private val ESCRITOR_LINEA_DEFECTO: (String) -> Unit = { println(it) }
-        private val VALIDADOR_DEFECTO: ValidadorEntrada = ValidadorEntrada()
+        private val VALIDADOR_DEFECTO: ValidadorEntradaContract = ValidadorEntrada()
 
         /**
          * Función de conveniencia para solicitar la configuración utilizando la consola por defecto.

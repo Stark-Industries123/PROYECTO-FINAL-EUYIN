@@ -18,8 +18,4 @@ interface ManejadorColision {
      * Sobrecarga de conveniencia que resuelve la colisión a partir del [EnvironmentConfig].
      */
     fun resolverColision(estadoActual: ProjectileState, entorno: EnvironmentConfig): ProjectileState = resolverColision(estadoActual, entorno.rebote)
-
-    companion object {
-        fun porDefecto(): ManejadorColision = ManejadorReboteSuelo()
-    }
 }

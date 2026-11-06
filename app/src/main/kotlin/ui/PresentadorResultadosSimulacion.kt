@@ -16,12 +16,12 @@ import fisicas.motor.ResultadoSimulacion
 class PresentadorResultadosSimulacion(
     private val escritor: EscritorConsola = EscritorConsolaEstandar(),
     private val graficador: Graficador = GraficadorConsola(escritorLinea = { escritor.escribirLinea(it) })
-) {
+) : PresentadorResultados {
 
     /**
      * Emite el reporte numérico de impacto seguido de la gráfica ASCII de la trayectoria.
      */
-    fun presentarCompleto(config: ConfigSimulacion, resultados: ResultadoSimulacion) {
+    override fun presentarCompleto(config: ConfigSimulacion, resultados: ResultadoSimulacion) {
         escritor.escribirLinea("\n--- RESULTADOS DEL IMPACTO ---")
         mostrarDatosEntorno(config)
         mostrarDatosViento(config)
@@ -32,7 +32,7 @@ class PresentadorResultadosSimulacion(
     /**
      * Muestra el reporte final del impacto utilizando los valores dinámicos configurados.
      */
-    fun mostrarResultados(config: ConfigSimulacion, resultados: ResultadoSimulacion) {
+    override fun mostrarResultados(config: ConfigSimulacion, resultados: ResultadoSimulacion) {
         escritor.escribirLinea("\n--- RESULTADOS DEL IMPACTO ---")
         mostrarDatosEntorno(config)
         mostrarDatosViento(config)

@@ -17,20 +17,20 @@ import fisicas.gravedad.FuenteGravedad
 class LectorInteractivoConsola(
     private val lector: LectorConsola = LectorConsolaEstandar(),
     private val escritor: EscritorConsola = EscritorConsolaEstandar()
-) {
+) : LectorInteractivo {
 
-    fun escribirLinea(texto: String = "") {
+    override fun escribirLinea(texto: String) {
         escritor.escribirLinea(texto)
     }
 
-    fun mostrarGuiaCardinalDefecto() {
+    override fun mostrarGuiaCardinalDefecto() {
         escritor.escribirLinea("Norte: 315° a 45°")
         escritor.escribirLinea("Este: 45° a 135°")
         escritor.escribirLinea("Sur: 135° a 225°")
         escritor.escribirLinea("Oeste: 225° a 315°")
     }
 
-    fun solicitarPlaneta(parser: (String) -> FuenteGravedad?): FuenteGravedad {
+    override fun solicitarPlaneta(parser: (String) -> FuenteGravedad?): FuenteGravedad {
         while (true) {
             mostrarMenuPlanetas()
             val entrada = leerEntradaSegura() ?: continue
@@ -51,7 +51,7 @@ class LectorInteractivoConsola(
         escritor.escribir("Opción (1-4): ")
     }
 
-    fun solicitarDoubleValido(mensaje: String, validacionAdicional: (Double) -> String?): Double {
+    override fun solicitarDoubleValido(mensaje: String, validacionAdicional: (Double) -> String?): Double {
         while (true) {
             escritor.escribir(mensaje)
             val entrada = leerEntradaSegura() ?: continue

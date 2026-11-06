@@ -14,8 +14,4 @@ interface CalculadorFuerzas {
      * Calcula el vector de aceleración total instantánea según las fuerzas ambientales y la dinámica del cuerpo.
      */
     fun calcularAceleracion(estado: ProjectileState, proyectil: ProjectileConfig, entorno: EnvironmentConfig): Vector2D
-
-    companion object {
-        fun porDefecto(): CalculadorFuerzas = CalculadorFuerzasNewton()
-    }
 }

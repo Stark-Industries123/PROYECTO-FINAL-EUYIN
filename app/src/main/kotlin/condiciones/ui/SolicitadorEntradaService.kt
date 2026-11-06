@@ -9,14 +9,14 @@ import fisicas.gravedad.FuenteGravedad
  *
  * Cumplimiento de principios POO y SOLID:
  * - Single Responsibility Principle (SRP): Coordina qué parámetro se solicita en cada paso,
- *   delegando el bucle de lectura y control de errores en [LectorInteractivoConsola] y las
- *   reglas de validación de rangos en [ValidadorParametrosSimulacion].
+ *   delegando el bucle de lectura y control de errores en [LectorInteractivo] y las
+ *   reglas de validación de rangos en [ValidadorParametros].
  * - Alta Cohesión: Todos sus métodos operan sobre [interactivo] y [validador].
  */
 class SolicitadorEntradaService(
-    private val interactivo: LectorInteractivoConsola = LectorInteractivoConsola(),
-    private val validador: ValidadorParametrosSimulacion = ValidadorParametrosSimulacion()
-) {
+    private val interactivo: LectorInteractivo = LectorInteractivoConsola(),
+    private val validador: ValidadorParametros = ValidadorParametrosSimulacion()
+) : SolicitadorEntrada {
 
     /**
      * Constructor secundario que construye el servicio a partir de [LectorConsola] y [EscritorConsola].
@@ -29,29 +29,29 @@ class SolicitadorEntradaService(
         validador = ValidadorParametrosSimulacion()
     )
 
-    fun solicitarPlaneta(): FuenteGravedad {
+    override fun solicitarPlaneta(): FuenteGravedad {
         return interactivo.solicitarPlaneta { entrada -> validador.parsearPlaneta(entrada) }
     }
 
-    fun solicitarVelocidadInicial(): Double {
+    override fun solicitarVelocidadInicial(): Double {
         return interactivo.solicitarDoubleValido("Ingrese la velocidad inicial (m/s, > 0): ") { valor ->
             validador.validarVelocidadInicial(valor)
         }
     }
 
-    fun solicitarAnguloDisparo(): Double {
+    override fun solicitarAnguloDisparo(): Double {
         return interactivo.solicitarDoubleValido("Ingrese el ángulo de disparo (grados, 0-90): ") { valor ->
             validador.validarAnguloDisparo(valor)
         }
     }
 
-    fun solicitarAngulo(): Double {
+    override fun solicitarAngulo(): Double {
         return interactivo.solicitarDoubleValido("Ingrese el ángulo de disparo (grados, 0-90): ") { valor ->
             validador.validarAnguloDisparo(valor)
         }
     }
 
-    fun solicitarDireccionVientoConGuia(presentador: PresentadorRosaVientosService? = null): Double {
+    override fun solicitarDireccionVientoConGuia(presentador: PresentadorRosaVientos?): Double {
         if (presentador != null) {
             presentador.mostrarGuiaGeneralViento()
         } else {
@@ -62,19 +62,19 @@ class SolicitadorEntradaService(
         }
     }
 
-    fun solicitarDireccionViento(): Double {
+    override fun solicitarDireccionViento(): Double {
         return interactivo.solicitarDoubleValido("Ingrese la dirección del viento en grados (0-360): ") { valor ->
             validador.validarDireccionViento(valor)
         }
     }
 
-    fun solicitarVelocidadViento(): Double {
+    override fun solicitarVelocidadViento(): Double {
         return interactivo.solicitarDoubleValido("Ingrese la velocidad del viento (km/h, >= 0): ") { valor ->
             validador.validarVelocidadViento(valor)
         }
     }
 
-    fun solicitarPesoProyectil(): Double {
+    override fun solicitarPesoProyectil(): Double {
         return interactivo.solicitarDoubleValido("Ingrese el peso del proyectil en kg (> 0): ") { valor ->
             validador.validarPesoProyectil(valor)
         }

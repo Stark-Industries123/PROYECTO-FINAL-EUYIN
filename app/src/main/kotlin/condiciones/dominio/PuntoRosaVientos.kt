@@ -61,23 +61,24 @@ data class PuntoRosaVientos(
     }
 
     /**
-     * Formatea el intervalo angular delegando en [FormateadorPuntoRosa].
+     * Formatea el intervalo angular delegando en la abstracción [FormateadorRosa].
      */
-    fun formatearRango(): String {
-        return FormateadorPuntoRosa().formatearRango(rangoMinGrados, rangoMaxGrados, anguloNominal)
+    fun formatearRango(formateador: FormateadorRosa = FORMATEADOR_DEFECTO): String {
+        return formateador.formatearRango(rangoMinGrados, rangoMaxGrados, anguloNominal)
     }
 
     /**
-     * Retorna una línea descriptiva formateada delegando en [FormateadorPuntoRosa].
+     * Retorna una línea descriptiva formateada delegando en la abstracción [FormateadorRosa].
      */
-    fun descripcionDetallada(): String {
-        val rango = FormateadorPuntoRosa().formatearRango(rangoMinGrados, rangoMaxGrados, anguloNominal)
-        return FormateadorPuntoRosa().formatearDescripcion(codigo, nombreCompleto, anguloNominal, rango)
+    fun descripcionDetallada(formateador: FormateadorRosa = FORMATEADOR_DEFECTO): String {
+        val rango = formateador.formatearRango(rangoMinGrados, rangoMaxGrados, anguloNominal)
+        return formateador.formatearDescripcion(codigo, nombreCompleto, anguloNominal, rango)
     }
 
     companion object {
         const val TOTAL_PUNTOS: Int = 32
         const val AMPLITUD_PUNTO_GRADOS: Double = 11.25
         const val SEMI_AMPLITUD_GRADOS: Double = AMPLITUD_PUNTO_GRADOS / 2.0
+        private val FORMATEADOR_DEFECTO: FormateadorRosa = FormateadorPuntoRosa()
     }
 }

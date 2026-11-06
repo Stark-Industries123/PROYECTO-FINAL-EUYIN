@@ -1,8 +1,10 @@
 package fisicas.motor
 
+import fisicas.colision.ManejadorReboteSuelo
 import fisicas.config.EnvironmentConfig
 import fisicas.config.ProjectileConfig
 import fisicas.estado.ProjectileState
+import fisicas.fuerzas.CalculadorFuerzasNewton
 import fisicas.vector.Vector2D
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,9 +14,17 @@ class PhysicsEngineTest {
 
     private val delta = 1e-4
 
+    private fun crearMotor(tiempoMaximo: Double = 300.0): PhysicsEngine {
+        return PhysicsEngineImpl(
+            calculadorFuerzas = CalculadorFuerzasNewton(),
+            manejadorColision = ManejadorReboteSuelo(),
+            tiempoMaximo = tiempoMaximo
+        )
+    }
+
     @Test
     fun testActualizarPasoEvolucionaEstadoSegunDt() {
-        val engine = PhysicsEngineImpl()
+        val engine = crearMotor()
         val estadoInicial = ProjectileState(Vector2D(0.0, 10.0), Vector2D(5.0, 0.0), tiempo = 0.0)
         val proyectil = ProjectileConfig(masa = 1.0, coeficienteArrastre = 0.0)
         val entorno = EnvironmentConfig()
@@ -28,7 +38,7 @@ class PhysicsEngineTest {
 
     @Test
     fun testSimularGeneraTrayectoriaCompletaYFinalizaEnReposo() {
-        val engine = PhysicsEngineImpl(tiempoMaximo = 50.0)
+        val engine = crearMotor(tiempoMaximo = 50.0)
         val estadoInicial = ProjectileState(Vector2D(0.0, 0.0), Vector2D(10.0, 10.0), tiempo = 0.0)
         val proyectil = ProjectileConfig(masa = 1.0, coeficienteArrastre = 0.05)
         val entorno = EnvironmentConfig.conVientoYRebote(2.0, 90.0, 0.5, 0.8)
@@ -43,7 +53,7 @@ class PhysicsEngineTest {
 
     @Test
     fun testEstadoEnReposoNoSufreAlteraciones() {
-        val engine = PhysicsEngineImpl()
+        val engine = crearMotor()
         val estadoEnReposo = ProjectileState(Vector2D(0.0, 0.0), Vector2D(0.0, 0.0), 0.0, true)
         val proyectil = ProjectileConfig(masa = 1.0)
         val entorno = EnvironmentConfig()
