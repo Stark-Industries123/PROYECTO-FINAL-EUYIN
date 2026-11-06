@@ -75,12 +75,8 @@ class MenuConsola(
      * @return Magnitud de la velocidad inicial en m/s.
      */
     fun solicitarVelocidadInicial(): Double {
-        while (true) {
-            escritor("Introduce la velocidad inicial (m/s, > 0): ")
-            when (val res = validador.parsearVelocidad(lector())) {
-                is ResultadoValidacion.Exito -> return res.valor
-                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
-            }
+        return solicitarParametroNumerico("Introduce la velocidad inicial (m/s, > 0): ") {
+            validador.parsearVelocidad(it)
         }
     }
 
@@ -90,12 +86,8 @@ class MenuConsola(
      * @return Ángulo de elevación en grados.
      */
     fun solicitarAngulo(): Double {
-        while (true) {
-            escritor("Introduce el ángulo de disparo (grados, 0-90): ")
-            when (val res = validador.parsearAngulo(lector())) {
-                is ResultadoValidacion.Exito -> return res.valor
-                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
-            }
+        return solicitarParametroNumerico("Introduce el ángulo de disparo (grados, 0-90): ") {
+            validador.parsearAngulo(it)
         }
     }
 
@@ -105,12 +97,8 @@ class MenuConsola(
      * @return Masa del proyectil en kilogramos.
      */
     fun solicitarMasa(): Double {
-        while (true) {
-            escritor("Introduce la masa del proyectil (kg, > 0): ")
-            when (val res = validador.parsearMasa(lector())) {
-                is ResultadoValidacion.Exito -> return res.valor
-                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
-            }
+        return solicitarParametroNumerico("Introduce la masa del proyectil (kg, > 0): ") {
+            validador.parsearMasa(it)
         }
     }
 
@@ -120,12 +108,8 @@ class MenuConsola(
      * @return Velocidad del viento en km/h.
      */
     fun solicitarViento(): Double {
-        while (true) {
-            escritor("Introduce la velocidad del viento (km/h, >= 0): ")
-            when (val res = validador.parsearViento(lector())) {
-                is ResultadoValidacion.Exito -> return res.valor
-                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
-            }
+        return solicitarParametroNumerico("Introduce la velocidad del viento (km/h, >= 0): ") {
+            validador.parsearViento(it)
         }
     }
 
@@ -135,20 +119,29 @@ class MenuConsola(
      * @return Dirección del viento en grados.
      */
     fun solicitarDireccion(): Double {
+        return solicitarParametroNumerico("Introduce la dirección del viento (grados, 0-360): ") {
+            validador.parsearDireccion(it)
+        }
+    }
+
+    private fun solicitarParametroNumerico(
+        mensajePrompt: String,
+        parseador: (String?) -> ResultadoValidacion<Double>
+    ): Double {
         while (true) {
-            escritor("Introduce la dirección del viento (grados, 0-360): ")
-            when (val res = validador.parsearDireccion(lector())) {
-                is ResultadoValidacion.Exito -> return res.valor
-                is ResultadoValidacion.Error -> escritorLinea(res.mensaje)
+            escritor(mensajePrompt)
+            val valor = parseador(lector()).resolver(escritorLinea)
+            if (valor != null) {
+                return valor
             }
         }
     }
 
     companion object {
-        val LECTOR_DEFECTO: () -> String? = { readlnOrNull() }
-        val ESCRITOR_DEFECTO: (String) -> Unit = { print(it) }
-        val ESCRITOR_LINEA_DEFECTO: (String) -> Unit = { println(it) }
-        val VALIDADOR_DEFECTO: ValidadorEntrada = ValidadorEntrada()
+        private val LECTOR_DEFECTO: () -> String? = { readlnOrNull() }
+        private val ESCRITOR_DEFECTO: (String) -> Unit = { print(it) }
+        private val ESCRITOR_LINEA_DEFECTO: (String) -> Unit = { println(it) }
+        private val VALIDADOR_DEFECTO: ValidadorEntrada = ValidadorEntrada()
 
         /**
          * Función de conveniencia para solicitar la configuración utilizando la consola por defecto.
