@@ -48,13 +48,17 @@ class IntegradorCinematica3D(
         val metricas = ejecutarSimulacion(config, estado, trayectoria, piques)
         return ResultadoSimulacion(
             tiempoVuelo = trayectoria.last().tiempo,
-            distanciaMaxima = max(0.0, trayectoria.maxOf { it.x }),
+            distanciaMaxima = calcularAlcanceMaximo(trayectoria),
             alturaMaxima = metricas[0],
             trayectoria = trayectoria,
             cantidadRebotes = metricas[2].toInt(),
             desviacionLateralMaxima = trayectoria.maxOf { abs(it.z) },
             alturasMaximasPorPique = piques
         )
+    }
+
+    private fun calcularAlcanceMaximo(trayectoria: List<PuntoTrayectoria>): Double {
+        return trayectoria.maxByOrNull { abs(it.x) }?.x ?: 0.0
     }
 
     private fun ejecutarSimulacion(

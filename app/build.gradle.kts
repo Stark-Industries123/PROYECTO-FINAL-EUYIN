@@ -38,6 +38,14 @@ java {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/resources", "src/main/kotlin/resources")
+        }
+    }
+}
+
 application {
     mainClass.set("org.example.App")
 }
@@ -57,4 +65,11 @@ tasks.register<JavaExec>("runCondiciones") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("condiciones.ConfiguradorCondicionesApp")
     standardInput = System.`in`
+}
+
+tasks.register<JavaExec>("runGui") {
+    group = "application"
+    description = "Ejecuta la interfaz gráfica 2D de la simulación de tiro parabólico"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("ui.VentanaSimulacion")
 }

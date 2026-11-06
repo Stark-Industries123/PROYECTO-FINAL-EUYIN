@@ -65,7 +65,7 @@ class GraficadorConsola(
         if (tieneDesplazamientoNegativo(trayectoria)) {
             val minX = minOf(0.0, trayectoria.minOf { it.x })
             val maxX = maxOf(0.0, trayectoria.maxOf { it.x })
-            escritorLinea("Eje X [Sur (-X) <-- $caracterEjeOrigen Origen (0.00 m) --> Norte (+X)]: [%.2f m a %.2f m]".format(minX, maxX))
+            escritorLinea("Eje X [Sur (-X) <-- $caracterEjeOrigen Origen (0.00 m) --> Norte (+X)]: [%.2f m a %.2f m]".format(minX, maxX).replace(',', '.'))
         }
     }
 
