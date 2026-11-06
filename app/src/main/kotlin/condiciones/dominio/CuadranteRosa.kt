@@ -53,11 +53,8 @@ enum class CuadranteRosa(
      */
     fun contieneAngulo(grados: Double): Boolean {
         val normalizado = ((grados % 360.0) + 360.0) % 360.0
-        return when (this) {
-            NORTE_A_ESTE -> normalizado >= 0.0 && normalizado <= 90.0
-            ESTE_A_SUR -> normalizado >= 90.0 && normalizado <= 180.0
-            SUR_A_OESTE -> normalizado >= 180.0 && normalizado <= 270.0
-            OESTE_A_NORTE -> (normalizado >= 270.0 && normalizado <= 360.0) || normalizado == 0.0
-        }
+        val dentroDeRango = normalizado >= rangoMinGrados && normalizado <= rangoMaxGrados
+        val esCierreNorte = rangoMaxGrados == 360.0 && normalizado == 0.0
+        return dentroDeRango || esCierreNorte
     }
 }

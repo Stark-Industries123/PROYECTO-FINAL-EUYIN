@@ -16,7 +16,8 @@ import fisicas.gravedad.Tierra
  */
 class SelectorPlaneta(
     private val opcionMinima: Int = OPCION_TIERRA,
-    private val opcionMaxima: Int = OPCION_JUPITER
+    private val opcionMaxima: Int = OPCION_JUPITER,
+    private val catalogoPlanetas: Map<Int, () -> FuenteGravedad> = CATALOGO_DEFECTO
 ) {
 
     /**
@@ -32,13 +33,7 @@ class SelectorPlaneta(
 
     private fun instanciarPorOpcion(opcion: Int): FuenteGravedad? {
         if (opcion !in opcionMinima..opcionMaxima) return null
-        return when (opcion) {
-            OPCION_TIERRA -> Tierra()
-            OPCION_LUNA -> Luna()
-            OPCION_MERCURIO -> Mercurio()
-            OPCION_JUPITER -> Jupiter()
-            else -> null
-        }
+        return catalogoPlanetas[opcion]?.invoke()
     }
 
     companion object {
@@ -46,5 +41,12 @@ class SelectorPlaneta(
         const val OPCION_LUNA: Int = 2
         const val OPCION_MERCURIO: Int = 3
         const val OPCION_JUPITER: Int = 4
+
+        private val CATALOGO_DEFECTO: Map<Int, () -> FuenteGravedad> = mapOf(
+            OPCION_TIERRA to { Tierra() },
+            OPCION_LUNA to { Luna() },
+            OPCION_MERCURIO to { Mercurio() },
+            OPCION_JUPITER to { Jupiter() }
+        )
     }
 }
