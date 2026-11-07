@@ -243,6 +243,43 @@ xychart-beta
 | 12 | 2026-10-30 | `0933d54` | euyin | 4,795 | 5 | 99% | 5.6% | 0 |
 | 13 | 2026-10-30 | `aa67ffe` | euyin | 5,217 | 5 | 99% | 5.2% | 0 |
 
+<!-- actividad-clases:inicio -->
+## Actividad en días de clase
+
+> Período **2026-08-14 → 2026-10-29** · **17 clases** (lunes, viernes) · calendario oficial de la materia.
+>
+> `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**. Se usan las fechas de clase del calendario oficial; los días fuera del calendario no se incluyen.
+>
+> Se recorre `git log --all` sobre un mirror (todas las ramas y `refs/pull/*`), con deduplicación por commit. Fecha = fecha de autor en UTC-3. Los commits locales no pusheados no se ven. Si el trabajo fue en pareja y el commit es de otra persona, figura a nombre del autor del commit; para reflejarlo, usar `Co-authored-by` o una nota manual.
+>
+> Sección informativa: no modifica el semáforo de aprobación.
+
+### Eugenio Mosso
+
+**9/17 clases con actividad** · 12 commits · 8 merges
+
+| Fecha | Marca | Repositorios | Commits / merges |
+|---|:--:|---|--:|
+| 2026-08-14 | No | sin actividad | 0 / 0 |
+| 2026-08-21 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
+| 2026-08-24 | No | sin actividad | 0 / 0 |
+| 2026-08-28 | No | sin actividad | 0 / 0 |
+| 2026-08-31 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
+| 2026-09-04 | No | sin actividad | 0 / 0 |
+| 2026-09-07 | No | sin actividad | 0 / 0 |
+| 2026-09-14 | No | sin actividad | 0 / 0 |
+| 2026-09-25 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
+| 2026-09-28 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 2 |
+| 2026-10-02 | No | sin actividad | 0 / 0 |
+| 2026-10-05 | No | sin actividad | 0 / 0 |
+| 2026-10-09 | **Sí** | PROYECTO-FINAL-EUYIN | 3 / 3 |
+| 2026-10-16 | **Sí** | PROYECTO-FINAL-EUYIN | 2 / 2 |
+| 2026-10-19 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 1 |
+| 2026-10-23 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
+| 2026-10-26 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
+
+<!-- actividad-clases:fin -->
+
 ---
 _Informe generado por la cátedra. Los criterios y umbrales de medición corresponden al perfil `exigente` de `calidad.py`; el semáforo de aprobación, a `CRITERIOS-CALIDAD.md` (ver `README.md`). Ante dudas, revisá el archivo señalado._
 <!-- evaluacion:fin -->
