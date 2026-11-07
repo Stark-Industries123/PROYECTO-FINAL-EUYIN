@@ -280,14 +280,14 @@ xychart-beta
 | 2026-10-23 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
 | 2026-10-26 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
 
-#### Aportes fuera del calendario de clases
+#### Aportes fuera del calendario de clases — Eugenio Mosso
 
-**2 fechas fuera del calendario** · 8 commits · 9 merges
+**Eugenio Mosso — 2 fechas fuera del calendario** · 8 commits · 9 merges
 
-| Fecha | Repositorios | Commits / merges |
-|---|---|--:|
-| 2026-10-30 | PROYECTO-FINAL-EUYIN | 4 / 3 |
-| 2026-11-06 | PROYECTO-FINAL-EUYIN | 4 / 6 |
+| Alumno | Fecha | Repositorios | Commits / merges |
+|---|---|---|---|
+| Eugenio Mosso (`emosso-sudo`) | 2026-10-30 | PROYECTO-FINAL-EUYIN | 4 / 3 |
+| Eugenio Mosso (`emosso-sudo`) | 2026-11-06 | PROYECTO-FINAL-EUYIN | 4 / 6 |
 
 <!-- actividad-clases:fin -->
 
