@@ -246,11 +246,11 @@ xychart-beta
 <!-- actividad-clases:inicio -->
 ## Actividad en días de clase
 
-> Período **2026-08-14 → 2026-10-29** · **17 clases** (lunes, viernes) · calendario oficial de la materia.
+> Período evaluado **2026-08-14 → 2026-11-07** · **20 clases** (lunes, viernes) · días de clase del calendario, extendidos hasta la fecha de corte.
 >
 > `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**. El cuadro principal usa sólo las fechas de clase del calendario oficial.
 >
-> **Aportes fuera del calendario:** cada alumno tiene un cuadro aparte con las fechas no lectivas con actividad, desde **2026-08-14** hasta **2026-11-06** (ventana de aportes). Esas fechas no forman parte del cuadro principal, pero se muestran para no perder trabajo hecho en fines de semana, feriados o después del período.
+> **Aportes fuera del calendario:** cada alumno tiene un cuadro aparte con las fechas no lectivas con actividad, desde **2026-08-14** hasta **2026-11-07** (ventana de aportes). Esas fechas no forman parte del cuadro principal, pero se muestran para no perder trabajo hecho en fines de semana, feriados o después del período.
 >
 > Se recorre `git log --all` sobre un mirror (todas las ramas y `refs/pull/*`), con deduplicación por commit. Fecha = fecha de autor en UTC-3. Los commits locales no pusheados no se ven. Si el trabajo fue en pareja y el commit es de otra persona, figura a nombre del autor del commit; para reflejarlo, usar `Co-authored-by` o una nota manual.
 >
@@ -258,7 +258,7 @@ xychart-beta
 
 ### Eugenio Mosso
 
-**9/17 clases con actividad** · 12 commits · 8 merges
+**11/20 clases con actividad** · 20 commits · 17 merges
 
 | Fecha | Marca | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -279,15 +279,13 @@ xychart-beta
 | 2026-10-19 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 1 |
 | 2026-10-23 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
 | 2026-10-26 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
+| 2026-10-30 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 3 |
+| 2026-11-02 | No | sin actividad | 0 / 0 |
+| 2026-11-06 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 6 |
 
 #### Aportes fuera del calendario de clases — Eugenio Mosso
 
-**Eugenio Mosso — 2 fechas fuera del calendario** · 8 commits · 9 merges
-
-| Alumno | Fecha | Repositorios | Commits / merges |
-|---|---|---|---|
-| Eugenio Mosso (`emosso-sudo`) | 2026-10-30 | PROYECTO-FINAL-EUYIN | 4 / 3 |
-| Eugenio Mosso (`emosso-sudo`) | 2026-11-06 | PROYECTO-FINAL-EUYIN | 4 / 6 |
+_Sin aportes fuera del calendario de clases para Eugenio Mosso._
 
 <!-- actividad-clases:fin -->
 
