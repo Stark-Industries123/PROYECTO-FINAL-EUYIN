@@ -624,8 +624,9 @@ class PanelBrujulaViento(
 }
 
 /**
- * Lienzo del escenario de juego encargado de renderizar el fondo a pantalla completa y animar
- * en tiempo real (60 FPS) el desplazamiento y los rebotes del proyectil sin dibujar ejes X/Y.
+ * Lienzo del escenario de juego encargado de renderizar el fondo a pantalla completa,
+ * dibujar la escala vertical de altura tipo HUD en el margen izquierdo y animar
+ * en tiempo real (60 FPS) el desplazamiento y los rebotes del proyectil.
  *
  * Implementa el contrato [Graficador] respetando el Principio de Responsabilidad Única (SRP).
  */
@@ -745,9 +746,68 @@ class PanelTrayectoria(
             g2d.color = COLOR_FONDO_SOLIDO_FALLBACK
             g2d.fillRect(0, 0, width, height)
         }
+        dibujarReglaAlturaHud(g2d)
         if (puntos.isNotEmpty() && indiceFrameActual > 0) {
             dibujarProyectilYEstela(g2d)
         }
+    }
+
+    private fun dibujarReglaAlturaHud(g2d: Graphics2D) {
+        val escala = calcularEscalasEscenario()[1]
+        val maxY = calcularAlturaMaximaSimulacion()
+        val intervalo = calcularIntervaloRegla(maxY, escala)
+        val nivelSueloY = (height * PROPORCION_SUELO).toInt()
+        val topeReglaY = max(MARGEN_SUPERIOR_REGLA_Y, (nivelSueloY - height * PROPORCION_ALTO_UTIL).toInt())
+        if (nivelSueloY <= topeReglaY) return
+        dibujarEjeVerticalRegla(g2d, nivelSueloY, topeReglaY)
+        g2d.font = Font("SansSerif", Font.BOLD, 11)
+        var alturaMetros = 0
+        while (true) {
+            val py = nivelSueloY - (alturaMetros * escala).roundToInt()
+            if (py < topeReglaY) break
+            dibujarMarcaAlturaHud(g2d, py, "$alturaMetros m")
+            alturaMetros += intervalo
+        }
+    }
+
+    private fun dibujarEjeVerticalRegla(g2d: Graphics2D, nivelSueloY: Int, topeReglaY: Int) {
+        g2d.color = Color(0, 0, 0, 170)
+        g2d.stroke = BasicStroke(3.0f)
+        g2d.drawLine(X_EJE_REGLA + 1, nivelSueloY, X_EJE_REGLA + 1, topeReglaY)
+        g2d.color = Color(248, 250, 252, 220)
+        g2d.stroke = BasicStroke(1.8f)
+        g2d.drawLine(X_EJE_REGLA, nivelSueloY, X_EJE_REGLA, topeReglaY)
+    }
+
+    private fun dibujarMarcaAlturaHud(g2d: Graphics2D, py: Int, etiqueta: String) {
+        g2d.color = Color(0, 0, 0, 190)
+        g2d.stroke = BasicStroke(2.5f)
+        g2d.drawLine(X_INICIO_MARCA + 1, py + 1, X_FIN_MARCA + 1, py + 1)
+        g2d.color = Color.WHITE
+        g2d.stroke = BasicStroke(2.0f)
+        g2d.drawLine(X_INICIO_MARCA, py, X_FIN_MARCA, py)
+        val textoX = X_FIN_MARCA + 6
+        val anchoTexto = g2d.fontMetrics.stringWidth(etiqueta)
+        g2d.color = Color(15, 23, 42, 175)
+        g2d.fillRoundRect(textoX - 4, py - 9, anchoTexto + 8, 16, 6, 6)
+        g2d.color = Color(0, 0, 0, 220)
+        g2d.drawString(etiqueta, textoX + 1, py + 5)
+        g2d.color = Color.WHITE
+        g2d.drawString(etiqueta, textoX, py + 4)
+    }
+
+    private fun calcularIntervaloRegla(maxY: Double, escala: Double): Int {
+        val pasoObjetivo = max(1.0, maxY / DIVISIONES_OBJETIVO_REGLA)
+        var indice = ESCALONES_REGLA_METROS.indexOfFirst { it >= pasoObjetivo }
+        if (indice < 0) indice = ESCALONES_REGLA_METROS.lastIndex
+        while (indice < ESCALONES_REGLA_METROS.lastIndex && ESCALONES_REGLA_METROS[indice] * escala < SEPARACION_MINIMA_MARCAS_PX) {
+            indice++
+        }
+        return ESCALONES_REGLA_METROS[indice]
+    }
+
+    private fun calcularAlturaMaximaSimulacion(): Double {
+        return max(1.0, puntos.maxOfOrNull { it.y } ?: ALTURA_MAXIMA_DEFAULT)
     }
 
     private fun cargarImagenFondoPlaneta(): BufferedImage? {
@@ -794,12 +854,12 @@ class PanelTrayectoria(
     }
 
     private fun calcularEscalasEscenario(): DoubleArray {
-        val minX = min(0.0, puntos.minOf { it.x })
-        val maxX = max(1.0, puntos.maxOf { it.x })
+        val minX = min(0.0, puntos.minOfOrNull { it.x } ?: 0.0)
+        val maxX = max(1.0, puntos.maxOfOrNull { it.x } ?: ALTURA_MAXIMA_DEFAULT)
         val rangoX = max(1.0, maxX - minX)
-        val rangoY = max(1.0, puntos.maxOf { it.y })
+        val rangoY = calcularAlturaMaximaSimulacion()
         val anchoUtil = max(1.0, width * 0.84)
-        val altoUtil = max(1.0, height * 0.70)
+        val altoUtil = max(1.0, height * PROPORCION_ALTO_UTIL)
         val escala = min(anchoUtil / rangoX, altoUtil / rangoY)
         return doubleArrayOf(minX, escala, escala)
     }
@@ -837,7 +897,16 @@ class PanelTrayectoria(
         private const val INTERVALO_FRAME_MS: Int = 16
         private const val PUNTOS_POR_FRAME_DEFAULT: Int = 12
         private const val PROPORCION_SUELO: Double = 0.86
+        private const val PROPORCION_ALTO_UTIL: Double = 0.70
         private const val RADIO_PROYECTIL: Int = 7
+        private const val ALTURA_MAXIMA_DEFAULT: Double = 100.0
+        private const val DIVISIONES_OBJETIVO_REGLA: Double = 5.0
+        private const val SEPARACION_MINIMA_MARCAS_PX: Double = 28.0
+        private const val MARGEN_SUPERIOR_REGLA_Y: Int = 56
+        private const val X_EJE_REGLA: Int = 14
+        private const val X_INICIO_MARCA: Int = 10
+        private const val X_FIN_MARCA: Int = 22
+        private val ESCALONES_REGLA_METROS = intArrayOf(1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000)
         private val COLOR_FONDO_SOLIDO_FALLBACK = Color(15, 23, 42)
     }
 }
