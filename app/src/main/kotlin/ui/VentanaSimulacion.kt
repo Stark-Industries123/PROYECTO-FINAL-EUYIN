@@ -267,11 +267,13 @@ class VentanaSimulacion(
             val btnMenu = crearBotonCompacto("Menú Principal") { mostrarVista(VISTA_MENU_PRINCIPAL) }
             val btnConfig = crearBotonCompacto("Configuración") { mostrarVista(VISTA_CONFIGURACION) }
             val btnRelanzar = crearBotonCompacto("Repetir Disparo") { iniciarJuego() }
+            val btnFinalizar = crearBotonCompacto("Finalizar") { finalizarSimulacion() }
             etiquetaResumen.foreground = Color.WHITE
             etiquetaResumen.font = Font("SansSerif", Font.BOLD, 13)
             add(btnMenu)
             add(btnConfig)
             add(btnRelanzar)
+            add(btnFinalizar)
             add(etiquetaResumen)
         }
         return JPanel(BorderLayout()).apply {
@@ -279,6 +281,14 @@ class VentanaSimulacion(
             panelTrayectoria.layout = BorderLayout()
             panelTrayectoria.add(barraSuperior, BorderLayout.NORTH)
         }
+    }
+
+    /**
+     * salta la animación de la trayectoria en curso, renderizando todos los puntos
+     * de forma instantánea y abriendo las estadísticas post-partida.
+     */
+    fun finalizarSimulacion() {
+        panelTrayectoria.completarAnimacion()
     }
 
     private fun iniciarJuego() {
@@ -706,7 +716,26 @@ class PanelTrayectoria(
      * Detiene el temporizador de animación activo.
      */
     fun detenerAnimacion() {
-        timerAnimacion.stop()
+        if (timerAnimacion.isRunning) {
+            timerAnimacion.stop()
+        }
+    }
+
+    /**
+     * Interrumpe el temporizador de animación si está corriendo, posiciona el dibujado
+     * en el último punto de la trayectoria, repinta la parábola completa de inmediato
+     * y abre las estadísticas post-partida.
+     */
+    fun completarAnimacion() {
+        if (timerAnimacion.isRunning) {
+            timerAnimacion.stop()
+        }
+        if (puntos.isNotEmpty()) {
+            val ultimoIndice = puntos.size - 1
+            indiceFrameActual = ultimoIndice + 1
+            repaint()
+            notificarFinAnimacion()
+        }
     }
 
     /**
