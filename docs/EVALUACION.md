@@ -3,20 +3,20 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación II (RepoSense + análisis de calidad POO/SOLID). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-16.
+> Generado: 2026-11-17.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
-| Índice de calidad POO/SOLID | **79/100** |
-| Código (LOC) | 5,667 |
+| Índice de calidad POO/SOLID | **96/100** |
+| Código (LOC) | 5,758 |
 | Archivos de código | 112 |
-| Clases (bien usadas) | 114 (38 OK) |
+| Clases (bien usadas) | 114 (84 OK) |
 | Código dentro de clases (%POO) | 99% |
 | Funciones fuera de clases | 0 |
 | Duplicación lógica | 0.4% |
-| Señales S/O/L/I/D | 6/0/0/0/35 |
+| Señales S/O/L/I/D | 3/0/0/0/2 |
 
 > Este informe **describe** lo que el análisis midió con los criterios ya establecidos de la materia. No es una nota.
 
@@ -46,7 +46,7 @@ Criterios de `CRITERIOS-CALIDAD.md`. **Aprobar** se juega con el perfil `estanda
 | Duplicación lógica | ≤ 5% | 0.4% | sí |
 | Funciones fuera de clases | ≤ 1 | 0 | sí |
 | Señales POO/SOLID críticas | ninguna | Clase demasiado grande (SRP), Baja cohesión (LCOM), Acoplamiento alto (CBO) | no |
-| Índice de calidad POO/SOLID | ≥ 60 | 79/100 | sí |
+| Índice de calidad POO/SOLID | ≥ 60 | 96/100 | sí |
 
 ### Cómo se calcula el %POO (y por qué no sube solo)
 
@@ -60,7 +60,7 @@ Sube cuando el código que hoy está **fuera** de clases pasa a ser método de u
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Eugenio Mosso | 20 | 4,417 | 2,034 | 2 | 11 | 100% |
+| Eugenio Mosso | 22 | 4,515 | 2,034 | 2 | 12 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -72,9 +72,6 @@ Reúne lo que el análisis marcó y lo que todavía falta para cada semáforo. C
 |---|---|---|---|
 | Señales POO/SOLID críticas | Clase demasiado grande (SRP), Baja cohesión (LCOM), Acoplamiento alto (CBO) | Aprobar: ninguna<br>Destacar: ninguna | `app/src/main/kotlin/fisicas/motor/IntegradorCinematica3D.kt`, `app/src/main/kotlin/ui/GraficadorConsola.kt`, `app/src/main/kotlin/ui/VentanaSimulacion.kt` |
 | Métodos/funciones largos o con muchos parámetros | **4** método(s)/función(es) largos o con muchos parámetros | Sin señales | `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt`, `app/src/main/kotlin/ui/VentanaSimulacion.kt`, `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` |
-| Dependencia de concretos y falta de abstracciones (DIP) | **35** dependencia(s) de concretos sin abstracciones | Sin señales | `app/src/main/kotlin/condiciones/ConfiguradorCondicionesApp.kt`, `app/src/main/kotlin/condiciones/servicio/EnsambladorCondicionesService.kt`, `app/src/main/kotlin/condiciones/ui/ConfiguradorSimulacionConsola.kt`, `app/src/main/kotlin/condiciones/ui/SesionConsolaCondiciones.kt`, `app/src/main/kotlin/condiciones/ui/SolicitadorEntradaService.kt`, `app/src/main/kotlin/fisicas/config/EnvironmentConfig.kt` (+29 más) |
-| Clase sin métodos (solo datos) | **3** clase(s) sin métodos (solo datos) | Sin señales | `app/src/test/kotlin/fisicas/fuerzas/CalculadorArrastreAerodinamicoTest.kt`, `app/src/test/kotlin/fisicas/motor/MetricasImpactoTest.kt`, `app/src/test/kotlin/fisicas/motor/MotorFisicaEuler2DTest.kt` |
-| Campos públicos (encapsulación) | **19** clase(s) con campos públicos | Sin señales | `app/src/main/kotlin/condiciones/dominio/CuadranteRosa.kt`, `app/src/main/kotlin/condiciones/dominio/PuntoRosaVientos.kt`, `app/src/main/kotlin/condiciones/dominio/Viento.kt`, `app/src/main/kotlin/config/ConfigSimulacion.kt`, `app/src/main/kotlin/config/DireccionVientoSector.kt`, `app/src/main/kotlin/fisicas/config/BounceConfig.kt` (+13 más) |
 
 ## 4. Aspectos evaluados
 
@@ -84,7 +81,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina la riqueza de clases bien usadas con la penalización por señales POO/SOLID y duplicación, y luego aplica topes duros.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **79/100**
+- **Tu resultado:** índice **96/100**
 
 ### 2. Duplicación lógica (DRY) (duplicacion) — sin señales
 
@@ -96,7 +93,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Proporción de las **líneas de lógica** que viven dentro de una clase. Quedan fuera `package`/`import`/`using`/anotaciones y comentarios/Javadoc/docstrings: no son código que pueda estar dentro de una clase y, si contaran, el porcentaje quedaría topado por el boilerplate de cada archivo.
 - **Por qué importa:** El diseño orientado a objetos es el eje de la materia: el comportamiento debería vivir como método de una clase.
-- **Tu resultado:** **98.6%** del código dentro de clases
+- **Tu resultado:** **98.7%** del código dentro de clases
 - **Cómo leerlo:** Es una **proporción**, no un acumulado: agregar código dentro de una clase no la sube por sí solo (numerador y denominador crecen juntos). Sube cuando el código que está **fuera** de clases (funciones sueltas, `main`, constantes de módulo, scripts) pasa a ser método de una clase o deja de existir. La medición se hace sobre `main`: el trabajo que todavía vive en otra rama no se refleja hasta que se integra.
 
 ### 4. Funciones fuera de clases (sueltas) — sin señales
@@ -175,52 +172,56 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Suele indicar que la jerarquía no representa bien el problema y rompe la sustitución entre clases.
 - **Tu resultado:** **0** override(s) vacío(s) o 'no implementado'
 
-### 14. Dependencia de concretos y falta de abstracciones (DIP) (dip) — con señales
-
-- **Qué mide:** Instanciación directa de clases **propias** concretas y ausencia de interfaces o clases abstractas pese al acoplamiento. No cuentan los structs ni los nodos/tipos del motor.
-- **Por qué importa:** Depender de implementaciones concretas dificulta cambiar o probar una parte sin arrastrar las demás.
-- **Tu resultado:** **35** dependencia(s) de concretos sin abstracciones
-- **Para investigar la causa:**
-    - ¿La clase crea por dentro a sus colaboradores en vez de recibirlos?
-    - ¿Hay puntos de variación que convendría expresar como abstracción?
-    - ¿Cómo se probaría esa clase cambiando una implementación?
-
-### 15. Clase sin métodos (solo datos) (data) — con señales
+### 14. Clase sin métodos (solo datos) (data) — sin señales
 
 - **Qué mide:** Clases que solo acumulan campos y no tienen comportamiento.
 - **Por qué importa:** Separar datos de comportamiento reparte por el proyecto la lógica que debería estar cerca de esos datos.
-- **Tu resultado:** **3** clase(s) sin métodos (solo datos)
-- **Para investigar la causa:**
-    - ¿Dónde vive el comportamiento que opera sobre esos datos?
-    - ¿La clase representa un concepto del dominio o un contenedor técnico?
-    - ¿Se evita la lógica de negocio dentro de la clase por comodidad?
+- **Tu resultado:** **0** clase(s) sin métodos (solo datos)
 
-### 16. Campos públicos (encapsulación) (encapsulacion) — con señales
+### 15. Campos mutables públicos (encapsulación) (encapsulacion) — sin señales
 
-- **Qué mide:** Clases que exponen campos sin control de acceso.
+- **Qué mide:** Clases que exponen estado **modificable** desde afuera. No cuentan constantes (`static final`, `const`), campos `final`/`readonly`, propiedades `val` de Kotlin ni propiedades con `private set`.
 - **Por qué importa:** Expone el estado interno y hace que cualquier cambio dependa de quién lo modifica desde afuera.
-- **Tu resultado:** **19** clase(s) con campos públicos
-- **Para investigar la causa:**
-    - ¿Se accede al campo desde otras clases para evitar un método?
-    - ¿Qué reglas deberían respetarse al modificar ese estado?
-    - ¿Los campos públicos se usan más como configuración que como estado?
+- **Tu resultado:** **0** clase(s) con campos mutables públicos
 
-### 17. Clase solo con métodos estáticos (utilitaria) (static) — sin señales
+### 16. Clase solo con métodos estáticos (utilitaria) (static) — sin señales
 
 - **Qué mide:** Clases donde todos los métodos son estáticos.
 - **Por qué importa:** Es comportamiento procedural disfrazado de clase: no se instancia ni participa del modelo de objetos.
 - **Tu resultado:** **0** clase(s) solo con métodos estáticos
 
+### Desglose de la columna S (SRP)
+
+> La columna **S** no es un puntaje: cuenta **señales** de SRP. Aquí suma **3** entrada(s) sobre **3** clase(s) distinta(s).
+
+| Señal | Entradas | Regla (perfil exigente) |
+|---|---:|---|
+| Clase grande | 2 | ≥ 200 LOC lógico, o ≥ 15 métodos con lógica y ≥ 100 LOC lógico. No cuentan getters/setters. |
+| Cohesión baja | 1 | < 50 % de los pares de métodos comparten algún campo (con ≥ 4 métodos con lógica y ≥ 3 campos). |
+
+**Clases grandes (2)**
+
+- `VentanaSimulacion`: clase grande (LOC lógico=353, métodos=36, campos=28)
+- `PanelTrayectoria`: clase grande (LOC lógico=210, métodos=24, campos=22)
+
+**Clases con baja cohesión (1)**
+
+- `GraficadorConsola`: cohesión baja (31% de pares comparten campos)
+
+> Los **4** hallazgo(s) de métodos largos o con muchos parámetros se listan en «Métodos/funciones largos o con muchos parámetros» y **no suman** a la columna S.
+
+> El análisis no excluye tests: una clase de test que supere los umbrales también suma.
+
 ## 5. Evolución por commit
 
-Métricas calculadas sobre el estado de `main` en **cada commit** (23 commits con trabajo), del primero al último. La calidad usa el perfil `exigente`; el aporte de código lo mide RepoSense. El índice puede **bajar** al crecer el proyecto: se acumulan señales.
+Métricas calculadas sobre el estado de `main` en **cada commit** (26 commits con trabajo), del primero al último. La calidad usa el perfil `exigente`; el aporte de código lo mide RepoSense. El índice puede **bajar** al crecer el proyecto: se acumulan señales.
 
 ```mermaid
 xychart-beta
     title "Índice POO/SOLID a lo largo de los commits"
-    x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108", "20e1594", "c50dc6f", "0933d54", "aa67ffe", "e127311", "384d901", "86c3281", "4693de9", "cc6f411", "5c2432b", "9bb87f2", "e4089ec", "d91b311", "ffda79f"]
+    x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108", "20e1594", "c50dc6f", "0933d54", "aa67ffe", "e127311", "384d901", "86c3281", "4693de9", "cc6f411", "5c2432b", "9bb87f2", "e4089ec", "d91b311", "ffda79f", "ca16bc1", "c948366", "80706d4"]
     y-axis "Índice" 0 --> 100
-    line [0, 0, 60, 60, 60, 60, 72, 72, 69, 62, 58, 58, 56, 40, 40, 40, 79, 79, 79, 79, 79, 79, 79]
+    line [0, 0, 60, 60, 60, 60, 82, 82, 86, 87, 76, 76, 78, 20, 20, 20, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96]
 ```
 
 | # | Fecha | Commit | Autor | LOC | Índice | %POO | Duplic. | Sueltas |
@@ -231,71 +232,26 @@ xychart-beta
 | 4 | 2026-09-28 | `7284531` | euyin | 174 | 60 | 31% | 0.0% | 2 |
 | 5 | 2026-10-09 | `1fcb049` | euyin | 231 | 60 | 41% | 0.0% | 2 |
 | 6 | 2026-10-09 | `1a12f7b` | euyin | 430 | 60 | 68% | 0.0% | 2 |
-| 7 | 2026-10-09 | `88970ff` | euyin | 393 | 72 | 79% | 0.0% | 0 |
-| 8 | 2026-10-16 | `554234e` | euyin | 445 | 72 | 80% | 0.0% | 0 |
-| 9 | 2026-10-16 | `f7ce108` | euyin | 718 | 69 | 87% | 0.0% | 0 |
-| 10 | 2026-10-19 | `20e1594` | euyin | 1,845 | 62 | 97% | 1.3% | 0 |
-| 11 | 2026-10-30 | `c50dc6f` | euyin | 4,652 | 58 | 98% | 5.9% | 0 |
-| 12 | 2026-10-30 | `0933d54` | euyin | 4,795 | 58 | 98% | 5.7% | 0 |
-| 13 | 2026-10-30 | `aa67ffe` | euyin | 5,217 | 56 | 99% | 5.3% | 0 |
-| 14 | 2026-11-06 | `e127311` | euyin | 5,118 | 40 | 95% | 1.0% | 8 |
-| 15 | 2026-11-06 | `384d901` | euyin | 5,129 | 40 | 95% | 1.0% | 8 |
-| 16 | 2026-11-06 | `86c3281` | euyin | 5,379 | 40 | 95% | 1.0% | 8 |
-| 17 | 2026-11-06 | `4693de9` | euyin | 5,667 | 79 | 99% | 0.4% | 0 |
-| 18 | 2026-11-07 | `cc6f411` | dqmdz-etec | 5,667 | 79 | 99% | 0.4% | 0 |
-| 19 | 2026-11-07 | `5c2432b` | dqmdz-etec | 5,667 | 79 | 99% | 0.4% | 0 |
-| 20 | 2026-11-07 | `9bb87f2` | dqmdz-etec | 5,667 | 79 | 99% | 0.4% | 0 |
-| 21 | 2026-11-07 | `e4089ec` | dqmdz-etec | 5,667 | 79 | 99% | 0.4% | 0 |
-| 22 | 2026-11-13 | `d91b311` | dqmdz-etec | 5,667 | 79 | 99% | 0.4% | 0 |
-| 23 | 2026-11-14 | `ffda79f` | dqmdz-etec | 5,667 | 79 | 99% | 0.4% | 0 |
-
-<!-- actividad-clases:inicio -->
-## Actividad en días de clase
-
-> Período evaluado **2026-08-14 → 2026-11-16** · **22 clases** (lunes, viernes) · días de clase del calendario, extendidos hasta la fecha de corte.
->
-> `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**. El cuadro principal usa sólo las fechas de clase del calendario oficial.
->
-> **Aportes fuera del calendario:** cada alumno tiene un cuadro aparte con las fechas no lectivas con actividad, desde **2026-08-14** hasta **2026-11-16** (ventana de aportes). Esas fechas no forman parte del cuadro principal, pero se muestran para no perder trabajo hecho en fines de semana, feriados o después del período.
->
-> Se recorre `git log --all` sobre un mirror (todas las ramas y `refs/pull/*`), con deduplicación por commit. Fecha = fecha de autor en UTC-3. Los commits locales no pusheados no se ven. Si el trabajo fue en pareja y el commit es de otra persona, figura a nombre del autor del commit; para reflejarlo, usar `Co-authored-by` o una nota manual.
->
-> Sección informativa: no modifica el semáforo de aprobación.
-
-### Eugenio Mosso
-
-**11/22 clases con actividad** · 20 commits · 17 merges
-
-| Fecha | Marca | Repositorios | Commits / merges |
-|---|:--:|---|--:|
-| 2026-08-14 | No | sin actividad | 0 / 0 |
-| 2026-08-21 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-08-24 | No | sin actividad | 0 / 0 |
-| 2026-08-28 | No | sin actividad | 0 / 0 |
-| 2026-08-31 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-09-04 | No | sin actividad | 0 / 0 |
-| 2026-09-07 | No | sin actividad | 0 / 0 |
-| 2026-09-14 | No | sin actividad | 0 / 0 |
-| 2026-09-25 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-09-28 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 2 |
-| 2026-10-02 | No | sin actividad | 0 / 0 |
-| 2026-10-05 | No | sin actividad | 0 / 0 |
-| 2026-10-09 | **Sí** | PROYECTO-FINAL-EUYIN | 3 / 3 |
-| 2026-10-16 | **Sí** | PROYECTO-FINAL-EUYIN | 2 / 2 |
-| 2026-10-19 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 1 |
-| 2026-10-23 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-10-26 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-10-30 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 3 |
-| 2026-11-02 | No | sin actividad | 0 / 0 |
-| 2026-11-06 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 6 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
-| 2026-11-16 | No | sin actividad | 0 / 0 |
-
-#### Aportes fuera del calendario de clases — Eugenio Mosso
-
-_Sin aportes fuera del calendario de clases para Eugenio Mosso._
-
-<!-- actividad-clases:fin -->
+| 7 | 2026-10-09 | `88970ff` | euyin | 393 | 82 | 79% | 0.0% | 0 |
+| 8 | 2026-10-16 | `554234e` | euyin | 445 | 82 | 80% | 0.0% | 0 |
+| 9 | 2026-10-16 | `f7ce108` | euyin | 718 | 86 | 87% | 0.0% | 0 |
+| 10 | 2026-10-19 | `20e1594` | euyin | 1,845 | 87 | 97% | 1.3% | 0 |
+| 11 | 2026-10-30 | `c50dc6f` | euyin | 4,652 | 76 | 98% | 5.9% | 0 |
+| 12 | 2026-10-30 | `0933d54` | euyin | 4,795 | 76 | 98% | 5.7% | 0 |
+| 13 | 2026-10-30 | `aa67ffe` | euyin | 5,217 | 78 | 99% | 5.3% | 0 |
+| 14 | 2026-11-06 | `e127311` | euyin | 5,118 | 20 | 95% | 1.0% | 10 |
+| 15 | 2026-11-06 | `384d901` | euyin | 5,129 | 20 | 95% | 1.0% | 10 |
+| 16 | 2026-11-06 | `86c3281` | euyin | 5,379 | 20 | 95% | 1.0% | 10 |
+| 17 | 2026-11-06 | `4693de9` | euyin | 5,667 | 96 | 99% | 0.4% | 0 |
+| 18 | 2026-11-07 | `cc6f411` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 19 | 2026-11-07 | `5c2432b` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 20 | 2026-11-07 | `9bb87f2` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 21 | 2026-11-07 | `e4089ec` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 22 | 2026-11-13 | `d91b311` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 23 | 2026-11-14 | `ffda79f` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 24 | 2026-11-16 | `ca16bc1` | dqmdz-etec | 5,667 | 96 | 99% | 0.4% | 0 |
+| 25 | 2026-11-16 | `c948366` | euyin | 5,731 | 96 | 99% | 0.4% | 0 |
+| 26 | 2026-11-16 | `80706d4` | euyin | 5,758 | 96 | 99% | 0.4% | 0 |
 
 ---
 _Informe generado por la cátedra. Los criterios y umbrales de medición corresponden al perfil `exigente` de `calidad.py`; el semáforo de aprobación, a `CRITERIOS-CALIDAD.md` (ver `README.md`). Ante dudas, revisá el archivo señalado._
