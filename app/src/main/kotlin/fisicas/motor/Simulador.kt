@@ -26,7 +26,11 @@ class Simulador(
         pasoTiempoMuestreo: Double = 0.1
     ) : this(
         gravedadFoco = gravedadFoco,
-        integrador = IntegradorCinematica3D(coeficienteRestitucion, coeficienteArrastre, pasoTiempoMuestreo)
+        integrador = FabricaIntegradorCinematica3D().crear(
+            coeficienteRestitucion = coeficienteRestitucion,
+            coeficienteArrastre = coeficienteArrastre,
+            pasoTiempoMuestreo = pasoTiempoMuestreo
+        )
     )
 
     /**

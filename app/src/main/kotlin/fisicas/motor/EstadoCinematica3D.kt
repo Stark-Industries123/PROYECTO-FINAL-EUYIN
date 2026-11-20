@@ -1,5 +1,7 @@
 package fisicas.motor
 
+import config.ConfigSimulacion
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
@@ -10,63 +12,81 @@ import kotlin.math.sin
  * de un proyectil durante la integración numérica por pasos diferenciales.
  *
  * Cumplimiento de principios POO y SOLID:
- * - Single Responsibility Principle (SRP): Su única responsabilidad es evolucionar las coordenadas
- *   y velocidades 3D bajo aceleración e impacto contra el suelo.
+ * - Single Responsibility Principle (SRP): Evoluciona las coordenadas y velocidades 3D bajo
+ *   gravedad, arrastre, viento y rebotes, delegando el almacenamiento de muestras y métricas
+ *   al contrato [RegistroTrayectoria].
+ * - Dependency Inversion Principle (DIP): Depende de la abstracción [RegistroTrayectoria]
+ *   inyectada por constructor.
  */
 class EstadoCinematica3D(
-    velocidadInicial: Double,
-    anguloGrados: Double,
-    private val dt: Double,
-    private val coeficienteRestitucion: Double
+    config: ConfigSimulacion,
+    parametros: ParametrosIntegracion,
+    private val registro: RegistroTrayectoria
 ) : EstadoCinematica {
+
+    private val dt: Double = parametros.calcularDeltaTiempo()
+    private val coeficienteRestitucion: Double = parametros.coeficienteRestitucion
+    private val gravedad: Double = config.fuenteGravedad.gravedad
+    private val factorArrastre: Double = parametros.calcularFactorArrastre(config.masaKg)
+    private val vientoX: Double = -config.velocidadVientoMS() * cos(config.direccionVientoGrados * PI / 180.0)
+    private val vientoZ: Double = -config.velocidadVientoMS() * sin(config.direccionVientoGrados * PI / 180.0)
+
     private var x: Double = 0.0
     private var y: Double = 0.0
     private var z: Double = 0.0
-    private var vx: Double = if (abs(anguloGrados - 90.0) < 1e-9) 0.0 else velocidadInicial * cos(Math.toRadians(anguloGrados))
-    private var vy: Double = velocidadInicial * sin(Math.toRadians(anguloGrados))
+    private var vx: Double = if (abs(config.angulo - 90.0) < 1e-9) {
+        0.0
+    } else {
+        config.velocidadInicial * cos(config.angulo * PI / 180.0)
+    }
+    private var vy: Double = config.velocidadInicial * sin(config.angulo * PI / 180.0)
     private var vz: Double = 0.0
 
     /**
-     * Evalúa las aceleraciones aerodinámica y gravitatoria e integra un diferencial de tiempo [dt].
+     * Evalúa las aceleraciones aerodinámica y gravitatoria, integra un diferencial de tiempo [dt]
+     * y evalúa el impacto contra el suelo.
+     *
+     * @return `true` si el proyectil alcanzó el estado de reposo definitivo.
      */
-    override fun avanzarSubPaso(g: Double, factorArrastre: Double, vientoX: Double, vientoZ: Double): Double {
+    override fun avanzarSubPaso(): Boolean {
         vx += -factorArrastre * (vx - vientoX) * dt
-        vy += (-g - factorArrastre * vy) * dt
+        vy += (-gravedad - factorArrastre * vy) * dt
         vz += -factorArrastre * (vz - vientoZ) * dt
         x += vx * dt
         y += vy * dt
         z += vz * dt
-        return y
-    }
-
-    /**
-     * Registra las alturas máximas y evalúa el contacto con el suelo.
-     * Retorna `true` si el proyectil alcanzó el estado de reposo definitivo.
-     */
-    override fun registrarImpacto(piques: MutableList<Double>, metricas: DoubleArray): Boolean {
-        metricas[0] = max(metricas[0], y)
-        metricas[1] = max(metricas[1], y)
+        val alturaPreContacto = y
         val contacto = evaluarContactoSuelo()
-        if (contacto == 0) return false
-        if (metricas[1] > 1e-4) piques.add(metricas[1])
-        metricas[1] = 0.0
-        if (contacto == 1) metricas[2] += 1.0
+        registro.registrarSubPaso(alturaPreContacto, contacto)
         return contacto == -1 && vy == 0.0
     }
 
     /**
-     * Verifica si el proyectil tocó el suelo (Y <= 0) con velocidad descendente.
-     * Retorna 0 si sigue en el aire, 1 si rebota y -1 si queda en reposo.
+     * Registra una muestra instantánea del estado cinemático en [registro] para el instante [tiempo].
      */
-    override fun evaluarContactoSuelo(): Int {
+    override fun registrarMuestra(tiempo: Double) {
+        val punto = PuntoTrayectoria(
+            tiempo = tiempo,
+            x = x,
+            y = max(0.0, y),
+            z = z,
+            vx = vx,
+            vy = vy,
+            vz = vz
+        )
+        registro.registrarPunto(punto)
+    }
+
+    /**
+     * Construye el resultado final delegando en [registro].
+     */
+    override fun construirResultado(): ResultadoSimulacion = registro.construirResultado()
+
+    private fun evaluarContactoSuelo(): Int {
         if (y > 0.0) return 0
         y = 0.0
         if (vy >= 0.0) return 0
-        return resolverImpactoVertical()
-    }
-
-    private fun resolverImpactoVertical(): Int {
-        if (abs(vy) > 0.2 && coeficienteRestitucion > 0.0) {
+        if (abs(vy) > UMBRAL_VELOCIDAD_REBOTE && coeficienteRestitucion > 0.0) {
             vy = -vy * coeficienteRestitucion
             return 1
         }
@@ -76,10 +96,7 @@ class EstadoCinematica3D(
         return -1
     }
 
-    /**
-     * Construye una instantánea inmutable [PuntoTrayectoria] para el instante indicado.
-     */
-    override fun crearPunto(tiempo: Double): PuntoTrayectoria {
-        return PuntoTrayectoria(tiempo = tiempo, x = x, y = max(0.0, y), z = z, vx = vx, vy = vy, vz = vz)
+    companion object {
+        private const val UMBRAL_VELOCIDAD_REBOTE: Double = 0.2
     }
 }
