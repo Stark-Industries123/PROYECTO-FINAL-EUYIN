@@ -232,14 +232,14 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 ## 5. Evolución por commit
 
-Métricas calculadas sobre el estado de `main` en **cada commit** (27 commits con trabajo), del primero al último. La calidad usa el perfil `exigente`; el aporte de código lo mide RepoSense. El índice puede **bajar** al crecer el proyecto: se acumulan señales.
+Métricas calculadas sobre el estado de `main` en **cada commit** (28 commits con trabajo), del primero al último. La calidad usa el perfil `exigente`; el aporte de código lo mide RepoSense. El índice puede **bajar** al crecer el proyecto: se acumulan señales.
 
 ```mermaid
 xychart-beta
     title "Índice POO/SOLID a lo largo de los commits"
-    x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108", "20e1594", "c50dc6f", "0933d54", "aa67ffe", "e127311", "384d901", "86c3281", "4693de9", "cc6f411", "5c2432b", "9bb87f2", "e4089ec", "d91b311", "ffda79f", "ca16bc1", "c948366", "80706d4", "6026352"]
+    x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108", "20e1594", "c50dc6f", "0933d54", "aa67ffe", "e127311", "384d901", "86c3281", "4693de9", "cc6f411", "5c2432b", "9bb87f2", "e4089ec", "d91b311", "ffda79f", "ca16bc1", "c948366", "80706d4", "6026352", "e102a40"]
     y-axis "Índice" 0 --> 100
-    line [0, 0, 60, 60, 60, 60, 82, 82, 86, 87, 76, 76, 78, 20, 20, 20, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96]
+    line [0, 0, 60, 60, 60, 60, 82, 82, 86, 87, 76, 76, 78, 20, 20, 20, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96]
 ```
 
 | # | Fecha | Commit | Autor | LOC | Índice | %POO | Duplic. | Sueltas |
@@ -271,55 +271,7 @@ xychart-beta
 | 25 | 2026-11-16 | `c948366` | euyin | 5,731 | 96 | 99% | 0.4% | 0 |
 | 26 | 2026-11-16 | `80706d4` | euyin | 5,758 | 96 | 99% | 0.4% | 0 |
 | 27 | 2026-11-17 | `6026352` | dqmdz-etec | 5,758 | 96 | 99% | 0.4% | 0 |
-
-<!-- actividad-clases:inicio -->
-## Actividad en días de clase
-
-> Período evaluado **2026-08-14 → 2026-11-20** · **23 clases** (lunes, viernes) · días de clase del calendario, extendidos hasta la fecha de corte.
->
-> `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**. El cuadro principal usa sólo las fechas de clase del calendario oficial.
->
-> **Aportes fuera del calendario:** cada alumno tiene un cuadro aparte con las fechas no lectivas con actividad, desde **2026-08-14** hasta **2026-11-20** (ventana de aportes). Esas fechas no forman parte del cuadro principal, pero se muestran para no perder trabajo hecho en fines de semana, feriados o después del período.
->
-> Se recorre `git log --all` sobre un mirror (todas las ramas y `refs/pull/*`), con deduplicación por commit. Fecha = fecha de autor en UTC-3. Los commits locales no pusheados no se ven. Si el trabajo fue en pareja y el commit es de otra persona, figura a nombre del autor del commit; para reflejarlo, usar `Co-authored-by` o una nota manual.
->
-> Sección informativa: no modifica el semáforo de aprobación.
-
-### Eugenio Mosso
-
-**12/23 clases con actividad** · 22 commits · 19 merges
-
-| Fecha | Marca | Repositorios | Commits / merges |
-|---|:--:|---|--:|
-| 2026-08-14 | No | sin actividad | 0 / 0 |
-| 2026-08-21 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-08-24 | No | sin actividad | 0 / 0 |
-| 2026-08-28 | No | sin actividad | 0 / 0 |
-| 2026-08-31 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-09-04 | No | sin actividad | 0 / 0 |
-| 2026-09-07 | No | sin actividad | 0 / 0 |
-| 2026-09-14 | No | sin actividad | 0 / 0 |
-| 2026-09-25 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-09-28 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 2 |
-| 2026-10-02 | No | sin actividad | 0 / 0 |
-| 2026-10-05 | No | sin actividad | 0 / 0 |
-| 2026-10-09 | **Sí** | PROYECTO-FINAL-EUYIN | 3 / 3 |
-| 2026-10-16 | **Sí** | PROYECTO-FINAL-EUYIN | 2 / 2 |
-| 2026-10-19 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 1 |
-| 2026-10-23 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-10-26 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-10-30 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 3 |
-| 2026-11-02 | No | sin actividad | 0 / 0 |
-| 2026-11-06 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 6 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
-| 2026-11-16 | **Sí** | PROYECTO-FINAL-EUYIN | 2 / 2 |
-| 2026-11-20 | No | sin actividad | 0 / 0 |
-
-#### Aportes fuera del calendario de clases — Eugenio Mosso
-
-_Sin aportes fuera del calendario de clases para Eugenio Mosso._
-
-<!-- actividad-clases:fin -->
+| 28 | 2026-11-20 | `e102a40` | dqmdz-etec | 5,758 | 96 | 99% | 0.4% | 0 |
 
 ---
 _Informe generado por la cátedra. Los criterios y umbrales de medición corresponden al perfil `exigente` de `calidad.py`; el semáforo de aprobación, a `CRITERIOS-CALIDAD.md` (ver `README.md`). Ante dudas, revisá el archivo señalado._
