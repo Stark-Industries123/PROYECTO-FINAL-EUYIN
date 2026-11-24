@@ -1,5 +1,6 @@
 package ui
 
+import fisicas.motor.PuntoTrayectoria
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.FlowLayout
@@ -12,9 +13,9 @@ import javax.swing.JPanel
  * superior de navegación rápida y el resumen de métricas en tiempo real.
  */
 class VistaJuego(
-    private val fabrica: FabricaComponentesGui,
-    panelTrayectoria: PanelTrayectoria,
-    private val acciones: AccionesJuego
+    fabrica: FabricaComponentesGui,
+    acciones: AccionesJuego,
+    private val panelTrayectoria: PanelTrayectoria = PanelTrayectoria()
 ) : JPanel(BorderLayout()) {
 
     private val etiquetaResumen = JLabel("Listo para jugar.")
@@ -22,7 +23,7 @@ class VistaJuego(
     init {
         add(panelTrayectoria, BorderLayout.CENTER)
         panelTrayectoria.layout = BorderLayout()
-        panelTrayectoria.add(construirBarraSuperior(), BorderLayout.NORTH)
+        panelTrayectoria.add(construirBarraSuperior(fabrica, acciones), BorderLayout.NORTH)
     }
 
     /**
@@ -37,16 +38,55 @@ class VistaJuego(
      */
     fun obtenerTextoResumen(): String = etiquetaResumen.text
 
-    private fun construirBarraSuperior(): JPanel {
+    /**
+     * Detiene la animación en curso del lienzo de trayectoria.
+     */
+    fun detenerAnimacion() {
+        panelTrayectoria.detenerAnimacion()
+    }
+
+    /**
+     * Completa de inmediato la animación en curso mostrando todos los puntos.
+     */
+    fun completarAnimacion() {
+        panelTrayectoria.completarAnimacion()
+    }
+
+    /**
+     * Actualiza el planeta de fondo y, si se provee [trayectoria], inicia su animación.
+     */
+    fun mostrarEscenario(planeta: String, trayectoria: List<PuntoTrayectoria>? = null) {
+        panelTrayectoria.establecerPlaneta(planeta)
+        if (trayectoria != null) {
+            panelTrayectoria.graficar(trayectoria)
+        }
+    }
+
+    /**
+     * Registra la acción a ejecutar al finalizar la animación de la trayectoria.
+     */
+    fun establecerAlFinalizarAnimacion(callback: () -> Unit) {
+        panelTrayectoria.establecerAlFinalizarAnimacion(callback)
+    }
+
+    /**
+     * Retorna los puntos de trayectoria actualmente cargados en el lienzo.
+     */
+    fun obtenerPuntos(): List<PuntoTrayectoria> = panelTrayectoria.obtenerPuntos()
+
+    private fun construirBarraSuperior(
+        fabrica: FabricaComponentesGui,
+        acciones: AccionesJuego
+    ): JPanel {
         etiquetaResumen.foreground = Color.WHITE
         etiquetaResumen.font = Font("SansSerif", Font.BOLD, 13)
         return JPanel(FlowLayout(FlowLayout.LEFT, 12, 8)).apply {
             isOpaque = false
             add(fabrica.crearBotonCompacto("Menú Principal") {
-                acciones.alMostrarVista(GestorVistasGui.VISTA_MENU_PRINCIPAL)
+                acciones.alMostrarVista(AccionesJuego.VISTA_MENU_PRINCIPAL)
             })
             add(fabrica.crearBotonCompacto("Configuración") {
-                acciones.alMostrarVista(GestorVistasGui.VISTA_CONFIGURACION)
+                acciones.alMostrarVista(AccionesJuego.VISTA_CONFIGURACION)
             })
             add(fabrica.crearBotonCompacto("Repetir Disparo") { acciones.alIniciarJuego() })
             add(fabrica.crearBotonCompacto("Finalizar") { acciones.alFinalizarSimulacion() })

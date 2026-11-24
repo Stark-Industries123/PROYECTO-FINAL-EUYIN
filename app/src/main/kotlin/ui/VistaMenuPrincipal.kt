@@ -24,7 +24,7 @@ class VistaMenuPrincipal(
     private fun crearTarjetaCentral(): JPanel {
         val btnJugar = fabrica.crearBotonPrimario("JUGAR") { acciones.alIniciarJuego() }
         val btnConfig = fabrica.crearBotonSecundario("CONFIGURACIÓN") {
-            acciones.alMostrarVista(GestorVistasGui.VISTA_CONFIGURACION)
+            acciones.alMostrarVista(AccionesJuego.VISTA_CONFIGURACION)
         }
         return JPanel().apply {
             layout = BoxLayout(this, BoxLayout.Y_AXIS)

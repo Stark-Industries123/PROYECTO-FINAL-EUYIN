@@ -1,69 +1,84 @@
 package ui
 
 import config.ConfigSimulacion
-import fisicas.motor.CalculadorTrayectoria
+import fisicas.motor.PuntoTrayectoria
 import fisicas.motor.ResultadoSimulacion
+import javax.swing.JPanel
 
 /**
- * Controlador de eventos de la interfaz gráfica encargado de coordinar las acciones del usuario,
- * la validación de parámetros, la invocación al motor físico y la presentación de resultados.
+ * Controlador de eventos de la interfaz gráfica encargado de coordinar las acciones del usuario
+ * entre la fachada de simulación [MotorSimulacionGui] y el navegador [NavegadorVistasGui].
+ *
+ * Cumplimiento de SOLID:
+ * - Dependency Inversion Principle (DIP): Depende exclusivamente de abstracciones inyectadas.
  */
 class ControladorSimulacionGui(
-    private val calculador: CalculadorTrayectoria,
-    val validadorFormulario: ValidadorFormularioGui,
-    val dialogoEstadisticas: DialogoEstadisticas,
-    val gestorVistas: GestorVistasGui
-) : AccionesJuego {
-
-    private var ultimaConfiguracion: ConfigSimulacion? = null
-    private var ultimoResultado: ResultadoSimulacion? = null
+    private val motor: MotorSimulacionGui,
+    private val navegador: NavegadorVistasGui
+) : ControladorVentanaGui {
 
     /**
-     * Inicializa las vistas, sincroniza el planeta inicial y posiciona la aplicación en el menú.
+     * Sincroniza el planeta inicial en el escenario y posiciona la aplicación en el menú principal.
      */
     fun inicializar() {
-        gestorVistas.registrarVistas(validadorFormulario.formulario, this)
-        gestorVistas.panelTrayectoria.establecerAlFinalizarAnimacion { mostrarEstadisticasPostPartida() }
-        gestorVistas.panelTrayectoria.establecerPlaneta(validadorFormulario.sincronizarPlanetaInicial())
-        gestorVistas.mostrarVista(GestorVistasGui.VISTA_MENU_PRINCIPAL)
+        navegador.mostrarEscenario(motor.sincronizarPlanetaInicial())
+        navegador.mostrarVista(NavegadorVistasGui.VISTA_MENU_PRINCIPAL)
     }
 
+    /**
+     * Callback disparado cuando finaliza la animación del proyectil en el lienzo de juego.
+     */
+    fun alFinalizarAnimacion() {
+        motor.mostrarUltimasEstadisticas()
+    }
+
+    override fun obtenerContenedor(): JPanel = navegador.obtenerContenedor()
+
     override fun alMostrarVista(nombreVista: String) {
-        gestorVistas.mostrarVista(nombreVista)
+        navegador.mostrarVista(nombreVista)
     }
 
     override fun alIniciarJuego() {
-        val config = validadorFormulario.construirConfiguracion { mostrarError(it) } ?: return
-        gestorVistas.mostrarVista(GestorVistasGui.VISTA_JUEGO)
-        ejecutarConConfig(config)
+        ejecutarConTransicion(cambiarAVistaJuego = true)
     }
 
     override fun alCambiarPlaneta(indice: Int) {
-        val planeta = validadorFormulario.actualizarPlanetaPorIndice(indice)
-        gestorVistas.panelTrayectoria.establecerPlaneta(planeta.obtenerNombre())
+        navegador.mostrarEscenario(motor.actualizarPlanetaPorIndice(indice))
     }
 
     override fun alFinalizarSimulacion() {
-        gestorVistas.panelTrayectoria.completarAnimacion()
+        navegador.completarAnimacion()
     }
 
-    /**
-     * Valida la configuración cargada en el formulario y ejecuta la simulación física.
-     */
-    fun ejecutarSimulacion(): Boolean {
-        val config = validadorFormulario.construirConfiguracion { mostrarError(it) } ?: return false
-        ejecutarConConfig(config)
-        return true
+    override fun actualizarEntradas(valores: Map<String, String>, direccionVientoGrados: Double?) {
+        motor.actualizarEntradas(valores, direccionVientoGrados)
     }
 
-    private fun ejecutarConConfig(config: ConfigSimulacion) {
-        ultimaConfiguracion = config
-        val nombrePlaneta = config.fuenteGravedad.obtenerNombre()
-        gestorVistas.panelTrayectoria.establecerPlaneta(nombrePlaneta)
-        val resultado = calculador.calcularTrayectoria(config)
-        ultimoResultado = resultado
-        gestorVistas.panelTrayectoria.graficar(resultado.trayectoria)
-        val resumen = String.format(
+    override fun obtenerTextoResumen(): String = navegador.obtenerTextoResumen()
+
+    override fun obtenerPuntosGraficados(): List<PuntoTrayectoria> = navegador.obtenerPuntosGraficados()
+
+    override fun ejecutarSimulacion(): Boolean = ejecutarConTransicion(cambiarAVistaJuego = false)
+
+    override fun construirTextoEstadisticas(config: ConfigSimulacion, resultado: ResultadoSimulacion): String {
+        return motor.construirTextoEstadisticas(config, resultado)
+    }
+
+    private fun ejecutarConTransicion(cambiarAVistaJuego: Boolean): Boolean {
+        return motor.ejecutar(
+            alResultado = { nombrePlaneta, resultado ->
+                if (cambiarAVistaJuego) {
+                    navegador.mostrarVista(NavegadorVistasGui.VISTA_JUEGO)
+                }
+                navegador.mostrarEscenario(nombrePlaneta, resultado.trayectoria)
+                navegador.actualizarResumen(formatearResumen(nombrePlaneta, resultado))
+            },
+            alError = { mensaje -> navegador.actualizarResumen(mensaje) }
+        )
+    }
+
+    private fun formatearResumen(nombrePlaneta: String, resultado: ResultadoSimulacion): String {
+        return String.format(
             "Planeta: %s | Tiempo: %.2f s | Alcance: %.2f m | Altura máx: %.2f m | Rebotes: %d",
             nombrePlaneta,
             resultado.tiempoVuelo,
@@ -71,17 +86,5 @@ class ControladorSimulacionGui(
             resultado.alturaMaxima,
             resultado.cantidadRebotes
         ).replace(',', '.')
-        gestorVistas.actualizarResumen(resumen)
-    }
-
-    private fun mostrarEstadisticasPostPartida() {
-        val config = ultimaConfiguracion ?: return
-        val resultado = ultimoResultado ?: return
-        dialogoEstadisticas.mostrarEstadisticas(config, resultado)
-    }
-
-    private fun mostrarError(mensaje: String) {
-        gestorVistas.actualizarResumen(mensaje)
-        dialogoEstadisticas.mostrarError(mensaje)
     }
 }

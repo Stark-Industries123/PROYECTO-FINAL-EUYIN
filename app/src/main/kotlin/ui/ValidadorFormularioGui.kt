@@ -9,33 +9,31 @@ import fisicas.gravedad.FuenteGravedad
  */
 class ValidadorFormularioGui(
     private val validador: ValidadorEntradaContract,
-    val formulario: FormularioParametros,
+    private val formulario: FormularioParametros,
     private var fuenteGravedad: FuenteGravedad
-) {
+) : ValidadorConfiguracionGui {
 
-    /**
-     * Sincroniza la selección inicial del formulario con la gravedad configurada y retorna su nombre.
-     */
-    fun sincronizarPlanetaInicial(): String {
+    override fun sincronizarPlanetaInicial(): String {
         val nombreActual = fuenteGravedad.obtenerNombre()
         formulario.seleccionarPlaneta(nombreActual)
         return nombreActual
     }
 
-    /**
-     * Actualiza la fuente de gravedad activa a partir del índice seleccionado en el combo de planetas.
-     */
-    fun actualizarPlanetaPorIndice(indice: Int): FuenteGravedad {
+    override fun actualizarPlanetaPorIndice(indice: Int): String {
         val opcion = (indice + 1).toString()
         fuenteGravedad = validador.parsearPlaneta(opcion) ?: fuenteGravedad
-        return fuenteGravedad
+        return fuenteGravedad.obtenerNombre()
     }
 
-    /**
-     * Parsea y valida todos los parámetros actuales del formulario. Ante cualquier error invoca
-     * [alError] con el mensaje descriptivo y retorna `null`.
-     */
-    fun construirConfiguracion(alError: (String) -> Unit): ConfigSimulacion? {
+    override fun actualizarEntradas(valores: Map<String, String>, direccionVientoGrados: Double?) {
+        if (direccionVientoGrados != null) {
+            formulario.actualizarEntradas(valores, direccionVientoGrados)
+        } else {
+            formulario.actualizarEntradas(valores)
+        }
+    }
+
+    override fun construirConfiguracion(alError: (String) -> Unit): ConfigSimulacion? {
         val datos = formulario.extraerDatosCrudos()
         val velocidad = validarVelocidad(datos[FormularioParametros.CLAVE_VELOCIDAD], alError) ?: return null
         val angulo = validador.parsearAngulo(datos[FormularioParametros.CLAVE_ANGULO]).resolver(alError) ?: return null
