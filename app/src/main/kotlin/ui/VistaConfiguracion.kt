@@ -68,7 +68,7 @@ class VistaConfiguracion(
 
     private fun crearPie(): JPanel {
         val btnVolver = fabrica.crearBotonSecundario("VOLVER AL MENÚ", 220, 48) {
-            acciones.alMostrarVista(GestorVistasGui.VISTA_MENU_PRINCIPAL)
+            acciones.alMostrarVista(AccionesJuego.VISTA_MENU_PRINCIPAL)
         }
         val btnJugar = fabrica.crearBotonPrimario("GUARDAR Y JUGAR", 220, 48) {
             acciones.alIniciarJuego()

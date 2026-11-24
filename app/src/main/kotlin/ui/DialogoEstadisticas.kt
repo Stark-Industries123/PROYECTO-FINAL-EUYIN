@@ -14,12 +14,9 @@ import javax.swing.JOptionPane
  */
 class DialogoEstadisticas(
     private val componentePadre: Component
-) {
+) : PresentadorEstadisticasGui {
 
-    /**
-     * Construye el listado legible de estadísticas finales a partir de [config] y [resultado].
-     */
-    fun construirTextoEstadisticas(config: ConfigSimulacion, resultado: ResultadoSimulacion): String {
+    override fun construirTextoEstadisticas(config: ConfigSimulacion, resultado: ResultadoSimulacion): String {
         val sector = config.sectorViento.descripcion
         return listOf(
             "Planeta objetivo: ${config.fuenteGravedad.obtenerNombre()}",
@@ -35,10 +32,7 @@ class DialogoEstadisticas(
         ).joinToString("\n")
     }
 
-    /**
-     * Muestra el cuadro de diálogo modal con las estadísticas finales de la simulación.
-     */
-    fun mostrarEstadisticas(config: ConfigSimulacion, resultado: ResultadoSimulacion) {
+    override fun mostrarEstadisticas(config: ConfigSimulacion, resultado: ResultadoSimulacion) {
         val mensaje = construirTextoEstadisticas(config, resultado)
         if (!GraphicsEnvironment.isHeadless() && componentePadre.isShowing) {
             JOptionPane.showMessageDialog(
@@ -50,10 +44,7 @@ class DialogoEstadisticas(
         }
     }
 
-    /**
-     * Muestra un cuadro de diálogo modal informando un error de validación de entrada.
-     */
-    fun mostrarError(mensaje: String) {
+    override fun mostrarError(mensaje: String) {
         if (!GraphicsEnvironment.isHeadless() && componentePadre.isShowing) {
             JOptionPane.showMessageDialog(
                 componentePadre,

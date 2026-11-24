@@ -1,61 +1,62 @@
 package ui
 
+import fisicas.motor.PuntoTrayectoria
 import java.awt.CardLayout
 import javax.swing.JPanel
 
 /**
  * Gestor de navegación entre pantallas del simulador Swing basado en [CardLayout].
  *
- * Responsabilidad única (SRP): ensamblar las vistas (Menú, Configuración, Juego), cambiar
- * la pantalla activa deteniendo animaciones cuando corresponde y actualizar el resumen del HUD.
+ * Responsabilidad única (SRP): administrar el contenedor de pantallas, cambiar la vista activa
+ * deteniendo animaciones al salir del juego y delegar las actualizaciones del escenario a [VistaJuego].
  */
-class GestorVistasGui(
-    val panelTrayectoria: PanelTrayectoria
-) {
+class GestorVistasGui : NavegadorVistasGui {
 
-    private val cardLayout = CardLayout()
-    val contenedorVistas: JPanel = JPanel(cardLayout)
-    private val fabrica = FabricaComponentesGui()
+    private val contenedorVistas: JPanel = JPanel(CardLayout())
     private var vistaJuego: VistaJuego? = null
 
     /**
-     * Construye y registra las tres vistas principales dentro del [CardLayout].
+     * Registra las pantallas principales y la vista de juego dentro del [CardLayout].
      */
-    fun registrarVistas(formulario: FormularioParametros, acciones: AccionesJuego) {
-        val vistaMenu = VistaMenuPrincipal(fabrica, acciones)
-        val vistaConfig = VistaConfiguracion(fabrica, formulario, acciones)
-        val juego = VistaJuego(fabrica, panelTrayectoria, acciones)
+    fun registrarPantallas(
+        pantallas: Map<String, JPanel>,
+        juego: VistaJuego,
+        alFinalizarAnimacion: () -> Unit
+    ) {
+        pantallas.forEach { (nombre, panel) -> contenedorVistas.add(panel, nombre) }
         vistaJuego = juego
-        contenedorVistas.add(vistaMenu, VISTA_MENU_PRINCIPAL)
-        contenedorVistas.add(vistaConfig, VISTA_CONFIGURACION)
-        contenedorVistas.add(juego, VISTA_JUEGO)
+        juego.establecerAlFinalizarAnimacion(alFinalizarAnimacion)
+        contenedorVistas.add(juego, NavegadorVistasGui.VISTA_JUEGO)
     }
 
-    /**
-     * Activa la pantalla indicada por [nombreVista], deteniendo la animación si se abandona el juego.
-     */
-    fun mostrarVista(nombreVista: String) {
-        if (nombreVista != VISTA_JUEGO) {
-            panelTrayectoria.detenerAnimacion()
+    override fun obtenerContenedor(): JPanel = contenedorVistas
+
+    override fun mostrarVista(nombreVista: String) {
+        if (nombreVista != NavegadorVistasGui.VISTA_JUEGO) {
+            vistaJuego?.detenerAnimacion()
         }
-        cardLayout.show(contenedorVistas, nombreVista)
+        (contenedorVistas.layout as CardLayout).show(contenedorVistas, nombreVista)
     }
 
-    /**
-     * Actualiza el texto de resumen o error visible en la vista de juego.
-     */
-    fun actualizarResumen(texto: String) {
+    override fun actualizarResumen(texto: String) {
         vistaJuego?.actualizarResumen(texto)
     }
 
-    /**
-     * Retorna el texto de resumen actualmente mostrado en la vista de juego.
-     */
-    fun obtenerTextoResumen(): String = vistaJuego?.obtenerTextoResumen() ?: ""
+    override fun obtenerTextoResumen(): String = vistaJuego?.obtenerTextoResumen() ?: ""
+
+    override fun mostrarEscenario(planeta: String, trayectoria: List<PuntoTrayectoria>?) {
+        vistaJuego?.mostrarEscenario(planeta, trayectoria)
+    }
+
+    override fun completarAnimacion() {
+        vistaJuego?.completarAnimacion()
+    }
+
+    override fun obtenerPuntosGraficados(): List<PuntoTrayectoria> = vistaJuego?.obtenerPuntos() ?: emptyList()
 
     companion object {
-        const val VISTA_MENU_PRINCIPAL: String = "MenuPrincipal"
-        const val VISTA_CONFIGURACION: String = "Configuracion"
-        const val VISTA_JUEGO: String = "Juego"
+        const val VISTA_MENU_PRINCIPAL: String = NavegadorVistasGui.VISTA_MENU_PRINCIPAL
+        const val VISTA_CONFIGURACION: String = NavegadorVistasGui.VISTA_CONFIGURACION
+        const val VISTA_JUEGO: String = NavegadorVistasGui.VISTA_JUEGO
     }
 }

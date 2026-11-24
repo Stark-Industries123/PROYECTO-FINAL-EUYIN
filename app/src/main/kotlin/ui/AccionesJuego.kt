@@ -27,4 +27,10 @@ interface AccionesJuego {
      * Notifica que el usuario seleccionó un nuevo planeta en el índice [indice].
      */
     fun alCambiarPlaneta(indice: Int)
+
+    companion object {
+        const val VISTA_MENU_PRINCIPAL: String = "MenuPrincipal"
+        const val VISTA_CONFIGURACION: String = "Configuracion"
+        const val VISTA_JUEGO: String = "Juego"
+    }
 }
