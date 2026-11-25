@@ -3,20 +3,21 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación II (RepoSense + análisis de calidad POO/SOLID). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-20.
+> Generado: 2026-11-25.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
-| Índice de calidad POO/SOLID | **96/100** |
-| Código (LOC) | 5,758 |
-| Archivos de código | 112 |
-| Clases (bien usadas) | 114 (84 OK) |
+| Índice de calidad POO/SOLID | **99/100** |
+| Commit evaluado | `cff4ca013744` (2026-11-24) |
+| Código (LOC) | 6,638 |
+| Archivos de código | 142 |
+| Clases (bien usadas) | 142 (107 OK) |
 | Código dentro de clases (%POO) | 99% |
 | Funciones fuera de clases | 0 |
 | Duplicación lógica | 0.4% |
-| Señales S/O/L/I/D | 3/0/0/0/2 |
+| Señales S/O/L/I/D | 0/0/0/0/0 |
 
 > Este informe **describe** lo que el análisis midió con los criterios ya establecidos de la materia. No es una nota.
 
@@ -26,8 +27,8 @@ Criterios de `CRITERIOS-CALIDAD.md`. **Aprobar** se juega con el perfil `estanda
 
 | Semáforo | Resultado |
 |---|---|
-| Aprobar (`estandar`) | **no cumple** — 3/4 |
-| Destacar (`exigente`) | **no cumple** — 4/5 |
+| Aprobar (`estandar`) | **cumple** — 4/4 |
+| Destacar (`exigente`) | **cumple** — 5/5 |
 
 **Criterios para aprobar**
 
@@ -36,7 +37,7 @@ Criterios de `CRITERIOS-CALIDAD.md`. **Aprobar** se juega con el perfil `estanda
 | Código dentro de clases (%POO) | ≥ 85% | 99% | sí |
 | Duplicación lógica | ≤ 10% | 0.4% | sí |
 | Funciones fuera de clases | ≤ 1 | 0 | sí |
-| Señales POO/SOLID críticas | ninguna | Clase demasiado grande (SRP), Baja cohesión (LCOM), Acoplamiento alto (CBO) | no |
+| Señales POO/SOLID críticas | ninguna | ninguna | sí |
 
 **Criterios para destacar**
 
@@ -45,8 +46,8 @@ Criterios de `CRITERIOS-CALIDAD.md`. **Aprobar** se juega con el perfil `estanda
 | Código dentro de clases (%POO) | ≥ 95% | 99% | sí |
 | Duplicación lógica | ≤ 5% | 0.4% | sí |
 | Funciones fuera de clases | ≤ 1 | 0 | sí |
-| Señales POO/SOLID críticas | ninguna | Clase demasiado grande (SRP), Baja cohesión (LCOM), Acoplamiento alto (CBO) | no |
-| Índice de calidad POO/SOLID | ≥ 60 | 96/100 | sí |
+| Señales POO/SOLID críticas | ninguna | ninguna | sí |
+| Índice de calidad POO/SOLID | ≥ 60 | 99/100 | sí |
 
 ### Cómo se calcula el %POO (y por qué no sube solo)
 
@@ -60,7 +61,7 @@ Sube cuando el código que hoy está **fuera** de clases pasa a ser método de u
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Eugenio Mosso | 22 | 4,515 | 2,034 | 2 | 12 | 100% |
+| Eugenio Mosso | 24 | 5,556 | 2,034 | 2 | 13 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -70,8 +71,7 @@ Reúne lo que el análisis marcó y lo que todavía falta para cada semáforo. C
 
 | Falla | Tu resultado | Requisito | Archivos |
 |---|---|---|---|
-| Señales POO/SOLID críticas | Clase demasiado grande (SRP), Baja cohesión (LCOM), Acoplamiento alto (CBO) | Aprobar: ninguna<br>Destacar: ninguna | `app/src/main/kotlin/fisicas/motor/IntegradorCinematica3D.kt`, `app/src/main/kotlin/ui/GraficadorConsola.kt`, `app/src/main/kotlin/ui/VentanaSimulacion.kt` |
-| Métodos/funciones largos o con muchos parámetros | **4** método(s)/función(es) largos o con muchos parámetros | Sin señales | `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt`, `app/src/main/kotlin/ui/VentanaSimulacion.kt`, `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` |
+| Métodos/funciones largos o con muchos parámetros | **3** método(s)/función(es) largos o con muchos parámetros | Sin señales | `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt`, `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` |
 
 ## 4. Aspectos evaluados
 
@@ -81,7 +81,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina la riqueza de clases bien usadas con la penalización por señales POO/SOLID y duplicación, y luego aplica topes duros.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **96/100**
+- **Tu resultado:** índice **99/100**
 
 ### 2. Duplicación lógica (DRY) (duplicacion) — sin señales
 
@@ -93,7 +93,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Proporción de las **líneas de lógica** que viven dentro de una clase. Quedan fuera `package`/`import`/`using`/anotaciones y comentarios/Javadoc/docstrings: no son código que pueda estar dentro de una clase y, si contaran, el porcentaje quedaría topado por el boilerplate de cada archivo.
 - **Por qué importa:** El diseño orientado a objetos es el eje de la materia: el comportamiento debería vivir como método de una clase.
-- **Tu resultado:** **98.7%** del código dentro de clases
+- **Tu resultado:** **98.8%** del código dentro de clases
 - **Cómo leerlo:** Es una **proporción**, no un acumulado: agregar código dentro de una clase no la sube por sí solo (numerador y denominador crecen juntos). Sube cuando el código que está **fuera** de clases (funciones sueltas, `main`, constantes de módulo, scripts) pasa a ser método de una clase o deja de existir. La medición se hace sobre `main`: el trabajo que todavía vive en otra rama no se refleja hasta que se integra.
 
 ### 4. Funciones fuera de clases (sueltas) — sin señales
@@ -102,25 +102,17 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Son la forma más directa de código procedural en un proyecto que debería ser orientado a objetos.
 - **Tu resultado:** **0** función(es) fuera de clases
 
-### 5. Clase demasiado grande (SRP) (god) — con señales
+### 5. Clase demasiado grande (SRP) (god) — sin señales
 
 - **Qué mide:** Clases con demasiadas líneas o métodos de LÓGICA. No cuentan los getters/setters triviales ni la cantidad de campos por sí sola.
 - **Por qué importa:** Una clase que hace de todo cambia por muchos motivos y cuesta entenderla y probarla.
-- **Tu resultado:** **2** clase(s) demasiado grande(s)
-- **Para investigar la causa:**
-    - ¿La clase creció por acumulación de responsabilidades?
-    - ¿Qué partes de la clase se usan siempre juntas y cuáles no?
-    - ¿Se podría describir su responsabilidad en una sola frase?
+- **Tu resultado:** **0** clase(s) demasiado grande(s)
 
-### 6. Baja cohesión (LCOM) (cohesion) — con señales
+### 6. Baja cohesión (LCOM) (cohesion) — sin señales
 
 - **Qué mide:** Métodos y campos de una clase que casi no se relacionan entre sí.
 - **Por qué importa:** Una unidad que cambia por motivos distintos y comparte poca información suele esconder más de una responsabilidad.
-- **Tu resultado:** **3** clase(s) con baja cohesión
-- **Para investigar la causa:**
-    - ¿Qué métodos de la clase no comparten estado con el resto?
-    - ¿Cambian por motivos distintos según la tarea?
-    - ¿Se pensó su responsabilidad antes de escribirla, o se fue agregando?
+- **Tu resultado:** **0** clase(s) con baja cohesión
 
 ### 7. Complejidad alta (complejidad) — sin señales
 
@@ -132,21 +124,17 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Tamaño de los métodos/funciones y cantidad de parámetros.
 - **Por qué importa:** Una función que hace varias cosas cuesta leerla, nombrarla y reutilizarla.
-- **Tu resultado:** **4** método(s)/función(es) largos o con muchos parámetros
+- **Tu resultado:** **3** método(s)/función(es) largos o con muchos parámetros
 - **Para investigar la causa:**
     - ¿La función creció por acumulación de pasos?
     - ¿Agrupa operaciones que podrían describirse por separado?
     - ¿Los parámetros representan una misma idea (un objeto) o cosas sueltas?
 
-### 9. Acoplamiento alto (CBO) (acoplamiento) — con señales
+### 9. Acoplamiento alto (CBO) (acoplamiento) — sin señales
 
 - **Qué mide:** Cuánto depende una clase de otros tipos del proyecto. No cuentan los tipos de la plataforma (biblioteca estándar, DOM, motor Godot) ni los métodos/propiedades propias.
 - **Por qué importa:** Piezas muy enlazadas hacen que un cambio se propague y que sea difícil reemplazar partes.
-- **Tu resultado:** **2** clase(s) muy acoplada(s)
-- **Para investigar la causa:**
-    - ¿La clase conoce detalles internos de muchas otras?
-    - ¿Se puede cambiar una parte sin tocar las demás?
-    - ¿Los colaboradores llegan como parámetros o se crean por dentro?
+- **Tu resultado:** **0** clase(s) muy acoplada(s)
 
 ### 10. Herencia profunda (DIT) (herencia) — sin señales
 
@@ -190,56 +178,80 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Es comportamiento procedural disfrazado de clase: no se instancia ni participa del modelo de objetos.
 - **Tu resultado:** **0** clase(s) solo con métodos estáticos
 
+### Resumen de señales por tipo
+
+| Señal | Cantidad | Principio | Archivos |
+|---|---:|---|---:|
+| muchos parámetros | 2 | S | 1 |
+| método largo | 1 | S | 1 |
+
+### Resumen por archivo
+
+> Archivos ordenados por cantidad de señales. Se excluyen **0** señal(es) de nivel repositorio sin archivo propio.
+
+| Archivo | Señales | Aspectos | Líneas |
+|---|---:|---|---|
+| `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt` | 2 | tamaño | 23, 54 |
+| `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` | 1 | tamaño | 54 |
+
 ### Archivos donde se originan las señales
 
-> Se listan **11** hallazgo(s) localizados en **5** archivo(s). La columna `Línea` es la línea del archivo donde el análisis detectó la señal; `—` indica una señal de nivel repositorio (sin archivo propio).
+> Se listan **3** hallazgo(s) localizados en **2** archivo(s). La columna `Línea` es la línea del archivo donde el análisis detectó la señal; `—` indica una señal de nivel repositorio (sin archivo propio).
 
 | Aspecto | Archivo | Línea | Hallazgo |
 |---|---|---:|---|
-| Clase demasiado grande (SRP) | `app/src/main/kotlin/ui/VentanaSimulacion.kt` | 62 | clase 'VentanaSimulacion' grande (LOC lógico=353, métodos=36, campos=28) |
-| Clase demasiado grande (SRP) | `app/src/main/kotlin/ui/VentanaSimulacion.kt` | 643 | clase 'PanelTrayectoria' grande (LOC lógico=210, métodos=24, campos=22) |
-| Baja cohesión (LCOM) | `app/src/main/kotlin/ui/GraficadorConsola.kt` | 29 | clase 'GraficadorConsola' con baja cohesión (31%) |
-| Baja cohesión (LCOM) | `app/src/main/kotlin/ui/VentanaSimulacion.kt` | 62 | clase 'VentanaSimulacion' con baja cohesión (23%) |
-| Baja cohesión (LCOM) | `app/src/main/kotlin/ui/VentanaSimulacion.kt` | 643 | clase 'PanelTrayectoria' con baja cohesión (19%) |
 | Métodos/funciones largos o con muchos parámetros | `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt` | 23 | método 'MotorFisicaEuler2D.integrarPaso' con 5 parámetros |
 | Métodos/funciones largos o con muchos parámetros | `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt` | 54 | método 'MotorFisicaEuler2D.avanzarEstado' con 6 parámetros |
-| Métodos/funciones largos o con muchos parámetros | `app/src/main/kotlin/ui/VentanaSimulacion.kt` | 303 | método 'VentanaSimulacion.ingresarDatos' con 5 parámetros |
 | Métodos/funciones largos o con muchos parámetros | `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` | 54 | método 'GraficadorConsolaMapeoTest.testDesplazamientoNegativoMuestraLineaVerticalOrigenYRebotesHaciaAtras' de 38 líneas |
-| Acoplamiento alto (CBO) | `app/src/main/kotlin/fisicas/motor/IntegradorCinematica3D.kt` | 18 | clase 'IntegradorCinematica3D' muy acoplada (CBO=8) |
-| Acoplamiento alto (CBO) | `app/src/main/kotlin/ui/VentanaSimulacion.kt` | 62 | clase 'VentanaSimulacion' muy acoplada (CBO=12) |
 
-### Desglose de la columna S (SRP)
+### Clases señaladas — métricas
 
-> La columna **S** no es un puntaje: cuenta **señales** de SRP. Aquí suma **3** entrada(s) sobre **3** clase(s) distinta(s).
+> Solo clases con al menos una señal. `LOC lóg.` y `Mét. lóg.` descuentan getters/setters; `LCOM` es la cantidad de pares de métodos sin campos en común.
 
-| Señal | Entradas | Regla (perfil exigente) |
-|---|---:|---|
-| Clase grande | 2 | ≥ 200 LOC lógico, o ≥ 15 métodos con lógica y ≥ 100 LOC lógico. No cuentan getters/setters. |
-| Cohesión baja | 1 | < 50 % de los pares de métodos comparten algún campo (con ≥ 4 métodos con lógica y ≥ 3 campos). |
+| Clase | Archivo | Línea | LOC lóg. | Mét. lóg. | Campos | CBO | LCOM | Cohesión | WMC | RFC | Señales |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `MotorFisicaEuler2D` | `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt` | 17 | 44 | 3 | 1 | 3 | 0 | 100% | 3 | 11 | muchos parámetros×2 |
+| `GraficadorConsolaMapeoTest` | `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` | 12 | 67 | 4 | 0 | 0 | 0 | 100% | 5 | 19 | método largo×1 |
 
-**Clases grandes (2)**
+### Métodos y funciones señalados
 
-- `VentanaSimulacion`: clase grande (LOC lógico=353, métodos=36, campos=28)
-- `PanelTrayectoria`: clase grande (LOC lógico=210, métodos=24, campos=22)
+> Filas ordenadas por complejidad, tamaño y parámetros. Una misma fila puede acumular más de una señal.
 
-**Clases con baja cohesión (1)**
+| Archivo | Línea | Método / función | LOC | Parámetros | Complejidad | Señales |
+|---|---:|---|---:|---:|---:|---|
+| `app/src/test/kotlin/ui/GraficadorConsolaMapeoTest.kt` | 54 | `GraficadorConsolaMapeoTest.testDesplazamientoNegativoMuestraLineaVerticalOrigenYRebotesHaciaAtras` | 38 | — | — | método largo |
+| `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt` | 54 | `MotorFisicaEuler2D.avanzarEstado` | — | 6 | — | muchos parámetros |
+| `app/src/main/kotlin/fisicas/motor/MotorFisicaEuler2D.kt` | 23 | `MotorFisicaEuler2D.integrarPaso` | — | 5 | — | muchos parámetros |
 
-- `GraficadorConsola`: cohesión baja (31% de pares comparten campos)
+### Umbrales aplicados (perfil exigente)
 
-> Los **4** hallazgo(s) de métodos largos o con muchos parámetros se listan en «Métodos/funciones largos o con muchos parámetros» y **no suman** a la columna S.
-
-> El análisis no excluye tests: una clase de test que supere los umbrales también suma.
+| Señal | Regla |
+|---|---|
+| Clase grande (SRP) | ≥ 200 LOC lógico, o ≥ 15 métodos con lógica y ≥ 100 LOC lógico; no cuentan getters/setters. |
+| Baja cohesión (LCOM) | < 50 % de pares de métodos comparten algún campo, con ≥ 4 métodos con lógica y ≥ 3 campos. |
+| Complejidad alta | algún método con complejidad ciclomática ≥ 10. |
+| Método largo | ≥ 30 líneas. |
+| Muchos parámetros | > 4 parámetros (5 o más). |
+| Acoplamiento alto (CBO) | CBO ≥ 8. |
+| Herencia profunda | DIT ≥ 3. |
+| Type-check / switch de tipos | ≥ 1 cadena de type-check. |
+| Interfaz demasiado grande (ISP) | > 6 métodos (7 o más). |
+| Override vacío (LSP) | método vacío o marcado como 'no implementado'. |
+| Clase solo de datos | 0 métodos y ≥ 3 campos. |
+| Campos mutables públicos | ≥ 4 campos mutables públicos y ≥ 4 campos. |
+| Clase estática | ≥ 2 métodos y todos estáticos. |
+| Duplicación lógica | ventana de 8 líneas; solo lógica; se informa desde 1 %. |
 
 ## 5. Evolución por commit
 
-Métricas calculadas sobre el estado de `main` en **cada commit** (30 commits con trabajo), del primero al último. La calidad usa el perfil `exigente`; el aporte de código lo mide RepoSense. El índice puede **bajar** al crecer el proyecto: se acumulan señales.
+Métricas calculadas sobre el estado de `main` en **cada commit** (33 commits con trabajo), del primero al último. La calidad usa el perfil `exigente`; el aporte de código lo mide RepoSense. El índice puede **bajar** al crecer el proyecto: se acumulan señales.
 
 ```mermaid
 xychart-beta
     title "Índice POO/SOLID a lo largo de los commits"
-    x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108", "20e1594", "c50dc6f", "0933d54", "aa67ffe", "e127311", "384d901", "86c3281", "4693de9", "cc6f411", "5c2432b", "9bb87f2", "e4089ec", "d91b311", "ffda79f", "ca16bc1", "c948366", "80706d4", "6026352", "e102a40", "698123c", "1f8ebc4"]
+    x-axis ["5e46215", "8beeedf", "3be7fbe", "7284531", "1fcb049", "1a12f7b", "88970ff", "554234e", "f7ce108", "20e1594", "c50dc6f", "0933d54", "aa67ffe", "e127311", "384d901", "86c3281", "4693de9", "cc6f411", "5c2432b", "9bb87f2", "e4089ec", "d91b311", "ffda79f", "ca16bc1", "c948366", "80706d4", "6026352", "e102a40", "698123c", "1f8ebc4", "d464669", "31203a0", "cff4ca0"]
     y-axis "Índice" 0 --> 100
-    line [0, 0, 60, 60, 60, 60, 82, 82, 86, 87, 76, 76, 78, 20, 20, 20, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96]
+    line [0, 0, 60, 60, 60, 60, 82, 82, 86, 87, 76, 76, 78, 20, 20, 20, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 98, 99]
 ```
 
 | # | Fecha | Commit | Autor | LOC | Índice | %POO | Duplic. | Sueltas |
@@ -274,55 +286,9 @@ xychart-beta
 | 28 | 2026-11-20 | `e102a40` | dqmdz-etec | 5,758 | 96 | 99% | 0.4% | 0 |
 | 29 | 2026-11-20 | `698123c` | dqmdz-etec | 5,758 | 96 | 99% | 0.4% | 0 |
 | 30 | 2026-11-20 | `1f8ebc4` | dqmdz-etec | 5,758 | 96 | 99% | 0.4% | 0 |
-
-<!-- actividad-clases:inicio -->
-## Actividad en días de clase
-
-> Período evaluado **2026-08-14 → 2026-11-20** · **23 clases** (lunes, viernes) · días de clase del calendario, extendidos hasta la fecha de corte.
->
-> `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**. El cuadro principal usa sólo las fechas de clase del calendario oficial.
->
-> **Aportes fuera del calendario:** cada alumno tiene un cuadro aparte con las fechas no lectivas con actividad, desde **2026-08-14** hasta **2026-11-20** (ventana de aportes). Esas fechas no forman parte del cuadro principal, pero se muestran para no perder trabajo hecho en fines de semana, feriados o después del período.
->
-> Se recorre `git log --all` sobre un mirror (todas las ramas y `refs/pull/*`), con deduplicación por commit. Fecha = fecha de autor en UTC-3. Los commits locales no pusheados no se ven. Si el trabajo fue en pareja y el commit es de otra persona, figura a nombre del autor del commit; para reflejarlo, usar `Co-authored-by` o una nota manual.
->
-> Sección informativa: no modifica el semáforo de aprobación.
-
-### Eugenio Mosso
-
-**13/23 clases con actividad** · 25 commits · 19 merges
-
-| Fecha | Marca | Repositorios | Commits / merges |
-|---|:--:|---|--:|
-| 2026-08-14 | No | sin actividad | 0 / 0 |
-| 2026-08-21 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-08-24 | No | sin actividad | 0 / 0 |
-| 2026-08-28 | No | sin actividad | 0 / 0 |
-| 2026-08-31 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-09-04 | No | sin actividad | 0 / 0 |
-| 2026-09-07 | No | sin actividad | 0 / 0 |
-| 2026-09-14 | No | sin actividad | 0 / 0 |
-| 2026-09-25 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-09-28 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 2 |
-| 2026-10-02 | No | sin actividad | 0 / 0 |
-| 2026-10-05 | No | sin actividad | 0 / 0 |
-| 2026-10-09 | **Sí** | PROYECTO-FINAL-EUYIN | 3 / 3 |
-| 2026-10-16 | **Sí** | PROYECTO-FINAL-EUYIN | 2 / 2 |
-| 2026-10-19 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 1 |
-| 2026-10-23 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-10-26 | **Sí** | PROYECTO-FINAL-EUYIN | 1 / 0 |
-| 2026-10-30 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 3 |
-| 2026-11-02 | No | sin actividad | 0 / 0 |
-| 2026-11-06 | **Sí** | PROYECTO-FINAL-EUYIN | 4 / 6 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
-| 2026-11-16 | **Sí** | PROYECTO-FINAL-EUYIN | 2 / 2 |
-| 2026-11-20 | **Sí** | PROYECTO-FINAL-EUYIN | 3 / 0 |
-
-#### Aportes fuera del calendario de clases — Eugenio Mosso
-
-_Sin aportes fuera del calendario de clases para Eugenio Mosso._
-
-<!-- actividad-clases:fin -->
+| 31 | 2026-11-20 | `d464669` | dqmdz-etec | 5,758 | 96 | 99% | 0.4% | 0 |
+| 32 | 2026-11-24 | `31203a0` | euyin | 6,235 | 98 | 99% | 0.4% | 0 |
+| 33 | 2026-11-24 | `cff4ca0` | dqmdz-etec | 6,638 | 99 | 99% | 0.4% | 0 |
 
 ---
 _Informe generado por la cátedra. Los criterios y umbrales de medición corresponden al perfil `exigente` de `calidad.py`; el semáforo de aprobación, a `CRITERIOS-CALIDAD.md` (ver `README.md`). Ante dudas, revisá el archivo señalado._
